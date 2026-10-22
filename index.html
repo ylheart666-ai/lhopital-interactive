@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<!-- 先判后算 · 洛必达 · 定版 2026-10-23 · 回归验收通过 -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+  <title>先判后算 · 洛必达法则</title>
+  <style>
+    :root{--navy:#1a365d;--navy-light:#244b7a;--orange:#ed8936;--paper:#f7fafc;--ink:#2d3748;--muted:#667085;--line:#e2e8f0;--blue:#4a6fa5;--good:#27805a;--bad:#c53030;--white:#fff}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;line-height:1.5}button,input,select,textarea{font:inherit}[hidden]{display:none!important}
+    button{cursor:pointer}.topbar{background:var(--navy);color:#fff;padding:10px max(16px,calc((100vw - 1220px)/2));display:flex;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:5}.brand{display:flex;align-items:center;gap:10px}.brand-mark{width:15px;height:15px;background:var(--orange);border-radius:3px}.brand h1{font-size:1.14rem;margin:0;white-space:nowrap}.topbar select{margin-left:auto;max-width:min(100%,370px);padding:9px 12px;color:#fff;background:var(--navy-light);border:1px solid #9fb6d0;border-radius:8px}.mode-chip{border:1px solid #ffffff70;border-radius:999px;padding:5px 10px;font-size:.81rem;color:#fff}#student-mode-button{min-width:44px;min-height:44px;padding:8px 14px;background:var(--orange);color:#1b2a3a;border:0;border-radius:8px;font-weight:700}
+    .wrap{max-width:1220px;margin:auto;padding:18px 16px 46px}.intro{margin:0 0 12px;color:var(--muted)}.panel-card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 3px 12px #1a365d0d;padding:20px}.panel-card h2,.panel-card h3{color:var(--navy);margin:0 0 12px}.panel-card h2{font-size:1.28rem}.panel-card h3{font-size:1.05rem}.tag{display:inline-flex;align-items:center;border-radius:999px;padding:3px 9px;background:#eaf1f9;color:var(--navy);font-size:.78rem;font-weight:700}.small{color:var(--muted);font-size:.86rem}.section-gap{margin-top:14px}.columns{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:16px;align-items:start}.right-stack{display:grid;gap:14px}.progress-card{margin-bottom:16px}.path-row{display:flex;align-items:center;gap:9px;overflow-x:auto;white-space:nowrap;padding:4px 2px 9px;scrollbar-width:thin}.path-item{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;padding:5px 8px;border:2px solid transparent;border-radius:9px;color:var(--muted);font-size:.86rem}.path-symbol{display:inline-block;width:13px;height:13px;flex:0 0 13px;border:2px solid currentColor;border-radius:50%}.path-operation .path-symbol{border-radius:2px;width:11px;height:11px;flex-basis:11px}.path-node.independent{color:var(--good)}.path-node.assisted{color:var(--orange)}.path-node.review{color:var(--bad)}.path-item.current{border-color:var(--navy);color:var(--navy);font-weight:700}.path-item.current .path-symbol{background:var(--navy)}.path-ellipsis{flex:0 0 auto;color:var(--muted);font-weight:700}#flowchart-trigger{margin-top:5px}#flowchart-trigger:empty{display:none}#flowchart-trigger .action-btn{min-height:36px;padding:6px 12px;font-size:.84rem}#case-selector{min-height:44px}#checklist-details summary{display:flex;align-items:center;min-height:44px;cursor:pointer}
+    .left-stack{display:grid;gap:14px;align-content:start;min-width:0}#flowchart-anchor:empty{display:none}.flowchart-card{min-width:0}.flowchart-header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.flowchart-header h3{margin:0}.flowchart-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:12px 0}.flowchart-controls .action-btn{width:100%;min-height:40px;padding:5px 8px;font-size:.78rem;line-height:1.35}.flowchart-controls .active{background:var(--navy);color:var(--white)}.flowchart-svg{display:block;width:100%;height:auto;max-width:350px;margin:10px auto 0;font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;font-size:13px}.flowchart-svg path{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.flowchart-svg rect{fill:var(--white);stroke:currentColor;stroke-width:1.5}.flowchart-svg text{fill:currentColor;stroke:none;font-size:13px}.flowchart-svg .fc-route{color:var(--blue)}.flowchart-svg g.fc-route path{stroke-width:3}.flowchart-svg g.fc-route rect{stroke-width:2.5;fill:var(--paper)}.flowchart-svg .fc-misuse{color:var(--bad)}.flowchart-svg g.fc-misuse path{stroke-width:2.5;stroke-dasharray:6 4}.flowchart-svg g.fc-misuse rect{stroke-width:2;stroke-dasharray:5 3}.flowchart-svg .fc-dim{color:var(--muted);opacity:.52}.flowchart-svg .fc-attempt-dot{fill:var(--orange);stroke:var(--white);stroke-width:1}.flowchart-svg .fc-annotation{fill:var(--bad);font-weight:700}.flowchart-note{margin:8px 0 0;color:var(--navy);font-weight:700}.flowchart-trap{margin:8px 0 0;color:var(--bad);font-weight:700}
+    .action-btn{background:var(--blue);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-weight:700;min-height:44px}.action-btn:hover{background:var(--navy)}.action-btn:disabled{opacity:.55;cursor:default}.action-btn.orange{background:var(--orange);color:#1b2a3a}.action-btn.secondary{background:#edf2f7;color:var(--navy);border:1px solid #cbd5e0}.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.option-list{display:grid;gap:8px;margin:10px 0 16px}.option{display:flex;align-items:flex-start;gap:10px;border:1.5px solid #cbd5e0;border-radius:9px;padding:10px 12px;min-height:44px;cursor:pointer}.option:has(input:checked){background:#eaf1f9;border-color:var(--blue)}.option input{margin-top:4px;accent-color:var(--blue)}.option span{overflow-wrap:anywhere}.question{font-size:1.04rem;font-weight:700}.field-label{display:block;color:var(--navy);font-weight:700;margin:12px 0 5px}.text-field{width:100%;border:1.5px solid #cbd5e0;border-radius:8px;padding:10px;min-height:44px;color:var(--ink);background:#fff}.text-field:focus{outline:3px solid #4a6fa533;border-color:var(--blue)}
+    .decision-feedback,.hint-box,.note-box{border-radius:9px;padding:11px 13px;margin-top:12px;line-height:1.55}.decision-feedback{background:#f4f8fc;border-left:4px solid var(--blue)}.decision-feedback.error{background:#fff5f5;border-color:var(--bad)}.decision-feedback.success{background:#eaf7ef;border-color:var(--good)}.hint-box{background:#fff8e9;border:1px solid #f2d39b}.note-box{background:#edf2f7}.fade-notice{background:#eaf1f9;color:var(--navy);padding:8px 12px;border-radius:8px;margin-bottom:12px}.math-line{font-size:1.08rem;line-height:1.7;overflow-wrap:anywhere}.locked{color:var(--muted);background:#f4f7fa;border:1px dashed #bac8d8;border-radius:9px;padding:12px}.calc-step{margin:8px 0;border-left:3px solid var(--orange);padding:8px 11px;background:#fffaf4}.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.compare-box{padding:12px;border-radius:9px;background:#eaf7ef}.compare-box.wrong{background:#fff0ef}.compare-box strong{display:block;margin-bottom:5px}.data-table{width:100%;border-collapse:collapse;font-size:.87rem}.data-table th,.data-table td{padding:6px 8px;text-align:center;border-bottom:1px solid var(--line)}.data-table td{font-variant-numeric:tabular-nums}.sample-point{display:block;color:var(--muted);font-size:.78em}.sample-value{display:block;font-weight:600}.canvas-wrap{width:100%;height:280px;position:relative}canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:15px;flex-wrap:wrap;font-size:.83rem;color:var(--muted)}.legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:4px}.checklist{margin:0;padding-left:23px}.report-stat{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#edf2f7;border-radius:9px;padding:9px 12px}.summary-output{white-space:pre-wrap;overflow-wrap:anywhere;max-height:350px;overflow:auto;background:#f7fafc;border:1px solid var(--line);padding:12px;border-radius:9px;font-size:.84rem}.summary-tabs{display:flex;gap:8px;margin:12px 0}.summary-tabs button.active{background:var(--navy);color:#fff}.feedback-inline{min-height:1.5em;color:var(--bad)}.success-text{color:var(--good)}.footer{font-size:.78rem;color:var(--muted);margin-top:20px}
+    .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.math-visual{font-family:'Cambria Math','STIX Two Math','Times New Roman',serif;line-height:1.65}.math-visual sup{font-size:.72em;line-height:0;vertical-align:super}.math-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;white-space:nowrap;line-height:1.12;margin:0 .12em;font-size:.96em}.math-num{display:block;border-bottom:1.4px solid currentColor;padding:0 .16em .1em;text-align:center}.math-den{display:block;padding:.1em .16em 0;text-align:center}#case-heading{font-weight:400}.case-label{font-weight:700}.math-lim{display:inline-flex;flex-direction:column;align-items:center;vertical-align:baseline;font-family:'Cambria Math','Times New Roman',serif;font-weight:400;line-height:1.03;margin:0 .16em 0 0}.math-lim sub{font-size:.62em;white-space:nowrap}.case-formula{display:inline-flex;align-items:baseline;flex-wrap:nowrap;gap:.12em}.math-expression{font-weight:400;line-height:1.03}.math-expression>.math-visual{line-height:1.03}.graph-caption{font-size:.88rem;color:var(--navy);margin:4px 0 6px}.graph-limit{color:var(--good);font-weight:700}.graph-window{font-size:.78rem;color:var(--muted);margin:6px 0 0}
+    .path-item.current.independent{color:var(--good)}.path-item.current.assisted{color:var(--orange)}.path-item.current.review{color:var(--bad)}.path-item.current .path-symbol{background:currentColor}.flowchart-controls .action-btn.active{background:var(--navy);color:var(--white);border-color:var(--navy)}.flowchart-misuse-toggle{min-height:38px;padding:6px 10px;font-size:.82rem;white-space:nowrap}.flowchart-misuse-toggle.is-on,.flowchart-misuse-toggle.is-on:hover{background:var(--bad);color:var(--white)}.flowchart-misuse-toggle.is-off,.flowchart-misuse-toggle.is-off:hover{background:var(--blue);color:var(--white)}.flowchart-svg marker path{stroke:none;fill:var(--muted)}.flowchart-svg #fc-arrow-route path{fill:var(--blue)}.flowchart-svg #fc-arrow-misuse path{fill:var(--bad)}.flowchart-svg g.fc-route path{marker-end:url(#fc-arrow-route)}.flowchart-svg g.fc-misuse path{marker-end:url(#fc-arrow-misuse)}.flowchart-svg g.fc-dim path{marker-end:url(#fc-arrow-dim)}
+    .flowchart-legend{display:flex;align-items:center;flex-wrap:wrap;gap:7px 15px;margin:10px 0 3px;font-size:.82rem;color:var(--ink)}.flowchart-legend-item{display:inline-flex;align-items:center;gap:6px}.flowchart-legend-line{display:inline-block;width:26px;height:0;flex:0 0 26px;border-top:3px solid var(--muted)}.flowchart-legend-line.correct{border-color:var(--blue)}.flowchart-legend-line.misuse{border-color:var(--bad);border-top-style:dashed}.flowchart-legend-line.other{opacity:.55}
+    .learning-report-summary{padding:11px 12px;border-radius:9px;background:#edf6ff;color:var(--navy);line-height:1.65}.mastery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}.mastery-item{min-width:0;padding:12px;border:1px solid var(--line);border-radius:9px;background:#fff;overflow-wrap:anywhere}.mastery-item strong,.mastery-item>span{display:block}.mastery-item strong{color:var(--navy)}.mastery-item>span{margin-top:5px;font-size:.88rem}.mastery-state.good{color:var(--good)}.mastery-state.assisted{color:#8a4b0f}.mastery-state.review{color:var(--bad)}.learning-report-advice{margin-top:14px;padding:14px;border:1px solid #f2d39b;border-radius:9px;background:#fffaf0;line-height:1.65}.hint-profile-badge{margin-left:7px}.complete-record>summary{min-height:44px;display:flex;align-items:center;color:var(--navy);font-weight:700;cursor:pointer}.complete-record>summary::before{content:'▸';margin-right:7px}.complete-record[open]>summary::before{content:'▾'}.saved-rounds{padding-left:24px;font-size:.9rem}.summary-line-output{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--paper);padding:12px;border:1px solid var(--line);max-height:240px;overflow:auto}.modal-backdrop{position:fixed;inset:0;z-index:20;background:#1a365d99;display:flex;align-items:center;justify-content:center;padding:16px}.recommendation-dialog{width:min(100%,520px);max-height:90vh;overflow:auto;background:#fff;padding:22px;border-radius:12px;box-shadow:0 12px 40px #0003}.recommendation-dialog h3{margin-top:0;color:var(--navy)}
+    @media(max-width:600px){.mastery-grid{grid-template-columns:1fr}}
+    @media(max-width:768px){.columns{grid-template-columns:1fr}.topbar{position:static}.topbar select{margin-left:0}.canvas-wrap{height:250px}}
+    @media(max-width:480px){.wrap{padding:12px 10px 32px}.panel-card{padding:15px}.brand h1{font-size:1rem}.compare-grid{grid-template-columns:1fr}.action-btn{width:100%}.action-row{display:grid;grid-template-columns:1fr}.path-row{gap:5px}.path-item{font-size:.8rem;padding:5px 6px}.flowchart-header .action-btn{width:auto}.canvas-wrap{height:220px}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true"></span><h1>先判后算 · 洛必达法则</h1></div><span id="mode-chip" class="mode-chip"></span><button id="student-mode-button" type="button" hidden>🎓 学生学习</button><select id="case-selector" aria-label="切换案例" hidden></select></header>
+  <main class="wrap">
+    <p id="intro" class="intro"></p>
+    <section id="pretest-panel" class="panel-card" hidden></section>
+    <div id="learning-shell" hidden>
+      <section class="panel-card progress-card"><h2 id="case-heading"></h2><div id="progress-row" class="path-row" aria-label="检验路径"></div><div id="flowchart-trigger"></div></section>
+      <div class="columns">
+        <div class="left-stack"><p id="fade-notice" class="fade-notice" role="status" hidden></p><section id="node-card" class="panel-card" aria-live="polite"></section><div id="flowchart-anchor"></div></div>
+        <div class="right-stack">
+          <section class="panel-card"><h3>图像 · 靠近过程</h3><p id="graph-target" class="graph-caption"></p><div class="canvas-wrap"><canvas id="graph" role="img" aria-label="函数图像"></canvas></div><div id="graph-legend" class="legend"></div><p id="graph-limit" class="graph-caption graph-limit" hidden></p><p id="graph-window" class="graph-window" hidden></p></section>
+          <section class="panel-card"><h3>计算面板</h3><div id="calc-panel"></div></section>
+          <section id="misuse-panel" class="panel-card" hidden><h3>误用对照</h3><div id="misuse-content"></div></section>
+          <section class="panel-card" id="number-panel"><h3>数值表</h3><p id="number-description" class="small">观察原函数在目标点附近的取值。</p><div id="number-table"></div></section>
+          <section id="checklist-panel" class="panel-card"><details id="checklist-details"><summary><strong>四步条件清单</strong></summary><ol class="checklist"><li>是 0/0 型或 ∞/∞ 型吗？</li><li>0·∞、∞−∞ 等形式，先变形成分式了吗？</li><li>每用一次法则，新分式重新检验了吗？</li><li>导数比的极限存在吗？不存在时，法则不给结论，要换方法。</li></ol></details></section>
+        </div>
+      </div>
+    </div>
+    <section id="posttest-panel" class="panel-card" hidden></section>
+    <section id="report-panel" class="panel-card" hidden></section>
+    <p class="footer">离线单文件课件 · 数值只用于观察，结论以条件检验与推理为准。</p>
+  </main>
+  <script>
+  'use strict';
+  const CASE_IDS=['exp-basic','not-indet','xlnx','recheck','x-sinx'];
+  const DIAGNOSIS_ORDER=['lh-type-check','lh-transform','lh-recheck','lh-reverse-inference'];
+  const DIAGNOSIS_LABELS={'lh-type-check':'类型检验','lh-transform':'变形','lh-recheck':'每步再检验','lh-reverse-inference':'失效回退'};
+  const HINT_PROFILE_LABELS={support:'支持',normal:'常规',challenge:'挑战'};
+  const MASTERY_LABELS={independent:'独立掌握',assisted:'提示后掌握',review:'需要巩固'};
+  const CASE_FOR_DIAGNOSIS={'lh-type-check':'not-indet','lh-transform':'xlnx','lh-recheck':'recheck','lh-reverse-inference':'x-sinx'};
+  const NODE_DIMENSIONS={N1:'N1 · 识别类型',N2:'N2 · 验证条件',N3:'N3 · 决策',N4:'N4 · 求导后再检验',R:'R · 失效后回退'};
+  const PATH_LABELS={N1:'N1 识别类型',N2:'N2 验证条件',N3:'N3 决策',N4:'N4 再检验',R:'R 失效回退'};
+  const ANSWER_OPTIONS={
+    N1:[['a','确定值（不是未定式）'],['b','0/0 型'],['c','∞/∞ 型'],['d','0·∞ 型']],
+    N2:[['a','类型条件满足，可以尝试使用法则'],['b','类型条件不满足，不能直接使用法则']],
+    N3:[['a','直接使用洛必达法则'],['b','先变形成 0/0 或 ∞/∞ 型的分式，再使用法则'],['c','不用法则，直接代入']],
+    N4:[['a','仍是 0/0 或 ∞/∞ 型，再用一次法则'],['b','已不是未定式，直接代入求极限'],['c','导数比的极限不存在，法则不能给出结论']],
+    R:[['a','原极限不存在'],['b','法则失效、不给结论，改用其他方法求原极限'],['c','原极限等于 2']]
+  };
+  const HINT_ONE={N1:'先代进去看一看：分子、分母各趋于什么？',N2:'洛必达法则只管哪两种形式？',N3:'形式不对的时候，是直接放弃，还是能先改写？',N4:'得到新的分式以后，用法则之前要先做什么？',R:'导数比的极限不存在时，法则还给出结论吗？'};
+  const spec=(answer,reasons,hint2)=>({answer,reasons,hint2});
+  const CASES={
+    'exp-basic':{name:'基础正例：先检验，再使用',short:'x→0 时 (eˣ−1)/x',expression:'(eˣ−1)/x',limit:'x→0',path:['N1','N2','N3','N4'],points:[-.1,-.01,-.001,.001,.01,.1],range:[-.5,.5,.65,1.55],fn:x=>Math.expm1(x)/x,derivative:'(eˣ−1)′ / x′ = eˣ / 1',result:'x→0 时 eˣ/1 → 1，所以原极限为 1。',conclusion:'极限为 1。条件满足时，法则是可靠的工具。完成后可挑战 x→∞ 时 (x+sin x)/x。',flowchart:{route:['fc-N1','fc-e-N1-N2','fc-N2','fc-e-N2-N3','fc-N3','fc-e-N3-D','fc-D','fc-e-D-N4','fc-N4','fc-e-N4-E2','fc-E2'],misuse:null,trap:null},nodes:{
+      N1:spec('b',['e⁰−1=0，分母 x 也趋于 0','分母趋于 0，所以极限是无穷大','是分式，所以一定是未定式'],'分别算一算 x=0 时的 e⁰−1 和分母 x。'),
+      N2:spec('a',['是 0/0 型，满足类型条件','只要是分式就能用','分子分母都能求导就能用'],'0/0 型是不是法则要求的两种形式之一？'),
+      N3:spec('a',['已经是 0/0 型分式，不需要变形','洛必达法则什么时候都能用','求导以后式子一定更简单'],'现在的式子已经是分式了吗？还需要改写吗？'),
+      N4:spec('b',['x=0 时 e⁰/1=1，是确定值','用过一次就要一直用到底','分母是常数 1，没法再求导，只能停下'],'把 x=0 代进 eˣ/1，看看是什么形式。')
+    }},
+    'not-indet':{name:'类型检验：确定值不能误用',short:'x→1 时 (x²+1)/(x+1)',expression:'(x²+1)/(x+1)',limit:'x→1',path:['N1','N2','N3'],points:[.9,.99,.999,1.001,1.01,1.1],range:[.5,1.5,.65,1.45],fn:x=>(x*x+1)/(x+1),misuseFn:x=>2*x,result:'直接代入：(1²+1)/(1+1)=2/2=1。',conclusion:'极限为 1。先检验类型，才能决定是否使用法则。',correctCompare:'直接代入：2/2 = 1',wrongCompare:'误用法则：(x²+1)′/(x+1)′ = 2x/1 → 2',compareNote:'两个结果不一样，说明有一个做法错了。错在用法则之前没有检验类型。',flowchart:{route:['fc-N1','fc-e-N1-N2','fc-N2','fc-e-N2-N3','fc-N3','fc-e-N3-E1','fc-E1'],misuse:{edge:'fc-e-N3-D',label:'2x/1 → 2'},trap:{node:'N3',option:'a'}},nodes:{
+      N1:spec('a',['代入 x=1，分子为 2，分母为 2','是分式，所以就是未定式','分子分母都含 x，形式不确定'],'把 x=1 代进分子 x²+1 和分母 x+1，各得多少？'),
+      N2:spec('b',['2/2 不是 0/0 型，也不是 ∞/∞ 型','分子分母都可导，所以能用','用法则能算出结果，所以能用'],'2/2 是 0/0 型吗？是 ∞/∞ 型吗？'),
+      N3:spec('c',['分母不趋于 0，函数在 x=1 处连续，直接代入得 1','先用法则更保险','要先变形成 0/0 型才能求'],'分母在 x=1 处等于 2，不为 0，能不能直接代入？')
+    }},
+    'xlnx':{name:'先变形：把乘积写成分式',short:'x→0⁺ 时 x·ln x',expression:'x·ln x',limit:'x→0⁺',path:['N1','N2','N3','N4'],points:[.1,.01,.001],range:[0,.5,-.4,.08],fn:x=>x*Math.log(x),misuseFn:x=>1/x,transform:'x·ln x = ln x/(1/x)；x→0⁺ 时分子→−∞，分母→+∞，是 ∞/∞ 型。',derivative:'(ln x)′/(1/x)′ = (1/x)/(−1/x²) = −x',result:'x→0⁺ 时 −x→0，所以原极限为 0。',conclusion:'极限为 0。先把 0·∞ 型变形成符合条件的分式。',correctCompare:'先变形：ln x/(1/x)，用法则得 −x → 0',wrongCompare:'没有变形，把两个因子分别求导再相乘：(x)′·(ln x)′ = 1·(1/x) = 1/x → +∞',compareStatement:'一个趋于 0，一个趋于无穷大。错在 0·∞ 型没有先变形成分式，就动手求导。',compareNote:'也可以写成 x/(1/ln x)，是 0/0 型，但求导更麻烦。变形时挑求导简单的那种写法。',flowchart:{route:['fc-N1','fc-e-N1-N2','fc-N2','fc-e-N2-N3','fc-N3','fc-e-N3-T','fc-T','fc-e-T-D','fc-D','fc-e-D-N4','fc-N4','fc-e-N4-E2','fc-E2'],misuse:{edge:'fc-e-N3-D',label:'1·(1/x) → +∞'},trap:{node:'N3',option:'a'}},nodes:{
+      N1:spec('d',['x→0⁺ 时 x→0，ln x→−∞，是乘积','x→0，所以整个式子趋于 0','ln 0 没有意义，所以极限不存在'],'x 趋于什么？ln x 趋于什么？它们是相乘还是相除？'),
+      N2:spec('b',['0·∞ 不是分式，法则只管 0/0 或 ∞/∞ 型','是未定式就能用','可以分别对两个因子求导'],'法则写的是 f(x)/g(x)，x·ln x 是这种形式吗？'),
+      N3:spec('b',['把 x 挪到分母，写成 ln x/(1/x)，就变成 ∞/∞ 型','直接代入，0 乘以任何数都得 0','乘积不能用法则，所以这个极限求不出来'],'x 能不能写成 1/(1/x)，挪到分母上去？'),
+      N4:spec('b',['−x 在 x→0⁺ 时趋于 0，是确定值','式子里还有 x，要继续求导','原式有 ln x，所以还要再用法则'],'把 x→0⁺ 代进 −x，结果确定吗？')
+    }},
+    'recheck':{name:'连续使用：每步再检验',short:'x→0 时 (1−cos x)/(x²+x)',expression:'(1−cos x)/(x²+x)',limit:'x→0',path:['N1','N2','N3','N4'],points:[-.1,-.01,-.001,.001,.01,.1],range:[-.5,.5,-.3,.3],fn:x=>2*Math.sin(x/2)**2/(x*x+x),misuseFn:x=>Math.cos(x)/2,derivative:'(1−cos x)′/(x²+x)′ = sin x/(2x+1)',result:'新分式是 0/1 型，直接代入得 0。原极限为 0。',conclusion:'极限为 0。每用一次法则，都要重新检验新分式。',correctCompare:'第一次用法则得 sin x/(2x+1)，0/1 型，代入得 0。',wrongCompare:'没有重新检验，再用一次：(sin x)′/(2x+1)′ = cos x/2 → 1/2',compareNote:'第一次用完后，式子已经不是未定式了。每用一次法则，都要重新检验。',flowchart:{route:['fc-N1','fc-e-N1-N2','fc-N2','fc-e-N2-N3','fc-N3','fc-e-N3-D','fc-D','fc-e-D-N4','fc-N4','fc-e-N4-E2','fc-E2'],misuse:{edge:'fc-e-N4-D',label:'cos x/2 → 1/2'},trap:{node:'N4',option:'a'}},nodes:{
+      N1:spec('b',['1−cos 0=0，0²+0=0','cos x→1，所以分子趋于 1','分母趋于 0，所以极限是无穷大'],'分别算 x=0 时的 1−cos 0 和 0²+0。'),
+      N2:spec('a',['是 0/0 型，满足类型条件','只要分母趋于 0 就能用','含三角函数的极限都要用洛必达'],'0/0 型满足法则的类型条件吗？'),
+      N3:spec('a',['已经是 0/0 型分式，不需要变形','洛必达法则什么时候都能用','求导以后式子一定更简单'],'现在的式子已经是分式了吗？'),
+      N4:spec('b',['sin 0=0，2·0+1=1，是 0/1 型，确定值','上一步是 0/0 型，这一步也一定是','要一直求导，直到分母变成常数'],'把 x=0 代进 sin x/(2x+1)，分子、分母各是多少？')
+    }},
+    'x-sinx':{name:'失效后回退：不能反推',short:'x→∞ 时 (x+sin x)/x',expression:'(x+sin x)/x',limit:'x→∞',path:['N1','N2','N3','N4','R'],points:[10,100,1000,10000],range:[1,60,-.1,2.15],fn:x=>1+Math.sin(x)/x,misuseFn:x=>1+Math.cos(x),derivative:'(x+sin x)′/x′ = (1+cos x)/1',result:'导数比没有极限，法则不给结论；改写为 1+sin x/x，sin x 有界且 1/x→0，原极限为 1。',conclusion:'极限为 1。法则失效，只说明这条路走不通，不说明终点不存在。换一条路：拆开。',correctCompare:'改写为 1+sin x/x；sin x 有界，sin x/x→0，原极限为 1。',wrongCompare:'由导数比的极限不存在，断定原极限不存在——错。',compareNote:'法则失效，只说明这条路走不通，不说明终点不存在。换一条路：拆开。',flowchart:{route:['fc-N1','fc-e-N1-N2','fc-N2','fc-e-N2-N3','fc-N3','fc-e-N3-D','fc-D','fc-e-D-N4','fc-N4','fc-e-N4-R','fc-R','fc-e-R-E3','fc-E3'],misuse:{edge:'fc-e-R-X',label:'误判“极限不存在”'},trap:{node:'R',option:'a'}},nodes:{
+      N1:spec('c',['x→∞ 时分子 x+sin x→∞，分母 x→∞','sin x 一直振荡，形式无法判断','分子分母都是关于 x 的式子，所以等于 1'],'sin x 夹在 −1 和 1 之间，x 越来越大时 x+sin x 怎样变化？'),
+      N2:spec('a',['是 ∞/∞ 型，类型条件满足；能不能得出结论，还要看导数比的极限','是 ∞/∞ 型，所以法则一定能给出结论','分子含 sin x，不能用法则'],'类型条件满足了，法则就一定给出结论吗？还差哪个条件？'),
+      N3:spec('a',['已经是 ∞/∞ 型分式，可以尝试','洛必达法则什么时候都能用','必须先把 sin x 去掉才能用'],'现在的式子已经是分式了吗？'),
+      N4:spec('c',['1+cos x 在 0 到 2 之间来回振荡，没有极限','1+cos x 不是未定式，直接把 x=∞ 代进去','再求一次导，得 −sin x'],'看右边的图像：1+cos x 在 x 越来越大时，会趋于某个确定的数吗？'),
+      R:spec('b',['导数比的极限不存在，法则不给结论；改写成 1+sin x/x，sin x 有界、1/x→0，极限为 1','法则两个方向都成立，导数比没有极限，原极限也没有','图像在振荡，所以没有极限'],'法则说的是“导数比有极限，原极限就等于它”。反过来，它说了什么吗？')
+    }}
+  };
+  const GRAPH_TARGETS={
+    'exp-basic':{x:0,xLabel:'x→0',y:1},
+    'not-indet':{x:1,xLabel:'x→1',y:1},
+    'xlnx':{x:0,xLabel:'x→0⁺',y:0},
+    'recheck':{x:0,xLabel:'x→0',y:0},
+    'x-sinx':{x:Infinity,xLabel:'x→+∞',y:1}
+  };
+  const ALLOWED_PARENT_ORIGINS=Object.freeze(['https://mooc1.chaoxing.com','https://i.chaoxing.com','https://newesxidian.chaoxing.com']);
+  const POSTTEST_BANK_VERSION='lh-post-v2';
+  const POSTTEST_FORMS=[{id:'A',items:[
+    {id:'post-1',dimension:'类型检验',question:'求 x→0 时 (sin x+1)/(x+2) 的极限，下面哪个说法正确？',options:[['p1-a','能用法则，得 cos x/1，极限为 1'],['p1-b','不能用法则，它不是未定式，直接代入得 1/2'],['p1-c','能用法则，极限为 1/2'],['p1-d','极限不存在']],correctOptionId:'p1-b',explanation:'分子趋于 1、分母趋于 2；不是 0/0 或 ∞/∞ 型，应直接代入。'},
+    {id:'post-2',dimension:'变形',question:'求 x→+∞ 时 x·e⁻ˣ 的极限，第一步该做什么？',options:[['p2-a','分别对 x 和 e⁻ˣ 求导'],['p2-b','写成 x/eˣ，变成 ∞/∞ 型，再用法则'],['p2-c','直接代入，得 0'],['p2-d','它是未定式，直接用法则']],correctOptionId:'p2-b',explanation:'0·∞ 型要先变成符合条件的分式；x/eˣ 是 ∞/∞ 型。'},
+    {id:'post-3',dimension:'结论有效性',question:'求 x→∞ 时 (2x+cos x)/x 的极限。用法则得 2−sin x，它的极限不存在。正确的结论是？',options:[['p3-a','原极限不存在'],['p3-b','法则失效，改写为 2+cos x/x，极限为 2'],['p3-c','原极限为 2−sin x'],['p3-d','原极限为 ∞']],correctOptionId:'p3-b',explanation:'导数比无极限时法则不给结论，不能反推原极限不存在；要换方法。'},
+    {id:'post-4',dimension:'每步再检验',question:'求 x→0 时 sin x/(x²+x) 的极限。用一次法则得 cos x/(2x+1)，下一步应该？',options:[['p4-a','再用一次法则，得 −sin x/2，极限为 0'],['p4-b','它已是 1/1 型，不是未定式，直接代入得 1'],['p4-c','极限不存在'],['p4-d','还要再用两次法则']],correctOptionId:'p4-b',explanation:'第一次用完后，新分式为 1/1 型；漏检新分式就会误用第二次法则。'}
+  ]},{id:'B',items:[
+    {id:'post-1',dimension:'类型检验',question:'求 x→0 时 (eˣ−1)/(2x) 的极限。关于洛必达法则的类型条件，哪个判断正确？',options:[['b1-a','不是未定式，直接代入得 0'],['b1-b','分子有指数函数，所以不能用法则'],['b1-c','是 0/0 型，类型条件满足，可以继续检验条件并尝试法则'],['b1-d','分母趋于 0，所以原极限不存在']],correctOptionId:'b1-c',explanation:'分子、分母都趋于 0，是 0/0 型；本题其余条件也满足，求导后为 eˣ/2，极限为 1/2。不能仅凭“分母趋于 0”判不存在。'},
+    {id:'post-2',dimension:'变形',question:'求 x→0⁺ 时 x²·ln x 的极限，第一步应该怎样处理？',options:[['b2-a','把两个因子分别求导再相乘，得到 2'],['b2-b','直接把 0 与 −∞ 相乘，得到 0'],['b2-c','乘积形式不能求极限'],['b2-d','先写成 ln x/(1/x²)，检验为 ∞/∞ 型，再考虑法则']],correctOptionId:'b2-d',explanation:'这是 0·∞ 型，先写成 ln x/(1/x²)。分子趋于 −∞、分母趋于 +∞；求导后的比为 −x²/2，极限为 0。'},
+    {id:'post-3',dimension:'结论有效性',question:'求 x→+∞ 时 (x−sin x)/x 的极限。求导后的比是 1−cos x，没有极限。下一步应怎样判断？',options:[['b3-a','法则不给结论，改写为 1−sin x/x，原极限为 1'],['b3-b','导数比没有极限，所以原极限不存在'],['b3-c','把 cos x 当成 1，原极限为 0'],['b3-d','原极限就是 1−cos x']],correctOptionId:'b3-a',explanation:'导数比无极限不能反推原极限不存在。sin x 有界，而 1/x→0，拆成 1−sin x/x 后极限为 1。'},
+    {id:'post-4',dimension:'每步再检验',question:'求 x→0 时 (1−cos x)/x² 的极限。用一次法则得到 sin x/(2x)，下一步应该怎样做？',options:[['b4-a','已不是未定式，直接代入得 0'],['b4-b','新分式仍是 0/0 型，检验条件后可再用法则，得到 cos x/2→1/2'],['b4-c','法则只能使用一次，不能继续'],['b4-d','分母仍趋于 0，原极限不存在']],correctOptionId:'b4-b',explanation:'新分式的分子、分母仍同时趋于 0，且本题再次使用法则的条件满足；再求导得 cos x/2，极限为 1/2。应逐次检验，不能把“求导一次就停止”当规则。'}
+  ]},{id:'C',items:[
+    {id:'post-1',dimension:'类型检验',question:'求 x→1 时 ln x/(x+1) 的极限，哪个判断正确？',options:[['c1-a','分子趋于 0，所以是 0/0 型'],['c1-b','可用法则，得到 (1/x)/1，极限为 1'],['c1-c','分子分母都含 x，所以可以用法则'],['c1-d','这是 0/2，非未定式，应直接代入得 0']],correctOptionId:'c1-d',explanation:'必须分别看分子和分母：ln x→0、x+1→2。它不是 0/0 或 ∞/∞ 型，直接代入得 0；误用法则反而会得到错误的 1。'},
+    {id:'post-2',dimension:'变形',question:'求 x→+∞ 时 x²·e⁻ˣ 的极限，第一步应该做什么？',options:[['c2-a','先写成 x²/eˣ，确认是 ∞/∞ 型，再检验使用条件'],['c2-b','把两个因子分别求导后相乘'],['c2-c','把 ∞ 与 0 相乘，直接得 0'],['c2-d','所有未定式都可以不变形直接用法则']],correctOptionId:'c2-a',explanation:'乘积是 0·∞ 型，要先改写成分式 x²/eˣ。使用一次后为 2x/eˣ，仍为 ∞/∞ 型；再次检验后可再用，最终极限为 0。'},
+    {id:'post-3',dimension:'结论有效性',question:'求 x→+∞ 时 (x²+sin(x²))/x² 的极限。求导后的比为 1+cos(x²)，没有极限。正确的处理是？',options:[['c3-a','据此判定原极限不存在'],['c3-b','换方法，写成 1+sin(x²)/x²，极限为 1'],['c3-c','把 cos(x²) 当成 0，原极限为 1'],['c3-d','原极限就是 1+cos(x²)']],correctOptionId:'c3-b',explanation:'导数比振荡时法则不给结论。sin(x²) 有界，sin(x²)/x²→0，故原极限为 1；不能把振荡项直接当作 0。'},
+    {id:'post-4',dimension:'每步再检验',question:'求 x→0 时 (eˣ−1)/(3x+x²) 的极限。用一次法则得 eˣ/(3+2x)，下一步应该？',options:[['c4-a','继续求导，得 eˣ/2，极限为 1/2'],['c4-b','分子分母都含 x，所以仍是未定式'],['c4-c','新分式为 1/3，已非未定式，直接代入得 1/3'],['c4-d','原极限不存在']],correctOptionId:'c4-c',explanation:'新分子的极限为 1，新分母的极限为 3，已经是确定值，停止使用法则，极限为 1/3。继续求导得到的 1/2 没有依据。'}
+  ]},{id:'D',items:[
+    {id:'post-1',dimension:'类型检验',question:'求 x→+∞ 时 (3x+1)/(x+4) 的极限，关于类型条件的判断，哪个正确？',options:[['d1-a','分子分母都趋于 +∞，是 ∞/∞ 型，可以继续检验法则条件'],['d1-b','所有分式都能使用洛必达法则'],['d1-c','∞/∞ 可以直接当作 1，所以极限为 1'],['d1-d','分子趋于 +∞，所以原极限必为 +∞']],correctOptionId:'d1-a',explanation:'分子和分母都趋于 +∞，属于 ∞/∞ 型。本题其余条件满足，求导后的比为 3；也可以同除以 x 求得极限 3。'},
+    {id:'post-2',dimension:'变形',question:'求 x→+∞ 时 ln x·e⁻ˣ 的极限，第一步应该怎样处理？',options:[['d2-a','对两个因子分别求导再相乘'],['d2-b','先写成 ln x/eˣ，确认是 ∞/∞ 型，再检验使用条件'],['d2-c','把 ∞ 与 0 直接相乘得 0'],['d2-d','乘积是未定式，所以不必变形就可以用法则']],correctOptionId:'d2-b',explanation:'先把 0·∞ 型乘积改写成 ln x/eˣ，再检验法则条件。求导后的比为 (1/x)/eˣ，极限为 0，故原极限为 0。'},
+    {id:'post-3',dimension:'结论有效性',question:'求 x→+∞ 时 (3x+sin(2x))/(2x) 的极限。导数比为 (3+2cos(2x))/2，没有极限。下一步应该？',options:[['d3-a','原极限不存在'],['d3-b','直接把导数比中的 cos(2x) 当作 0'],['d3-c','法则不给结论，写成 3/2+sin(2x)/(2x)，极限为 3/2'],['d3-d','原极限为 +∞']],correctOptionId:'d3-c',explanation:'导数比无极限不意味着原极限不存在。sin(2x) 有界，而 1/(2x)→0，拆分后可得原极限为 3/2。'},
+    {id:'post-4',dimension:'每步再检验',question:'求 x→0 时 ln(1+x)/(x+x²) 的极限。用一次法则并化简得 1/((1+x)(1+2x))，下一步应该？',options:[['d4-a','把求导后的比再用法则，极限为 −1/2'],['d4-b','分子、分母都含 x，必须继续求导'],['d4-c','分子不为 0，所以原极限不存在'],['d4-d','新分子、新分母都趋于 1，直接代入得 1']],correctOptionId:'d4-d',explanation:'求导后的分式趋于 1/1，已经不是未定式，直接代入得 1。未化简的导数比若再次误用法则会得到 −1/2；每次使用前都应检验。'}
+  ]},{id:'E',items:[
+    {id:'post-1',dimension:'类型检验',question:'求 x→0 时 (cos x+2)/(x+1) 的极限，哪个说法正确？',options:[['e1-a','能用法则，求导后的比为 −sin x，极限为 0'],['e1-b','分子趋于 3、分母趋于 1，非未定式，直接代入得 3'],['e1-c','分子分母都含 x，所以能够用法则'],['e1-d','极限不存在']],correctOptionId:'e1-b',explanation:'原式为 3/1，不是 0/0 或 ∞/∞ 型，直接代入得 3；不能因分子、分母可求导就套用法则。'},
+    {id:'post-2',dimension:'变形',question:'求 x→+∞ 时 x·2⁻ˣ 的极限，第一步应该做什么？',options:[['e2-a','把两个因子分别求导再相乘'],['e2-b','把 ∞ 与 0 直接相乘得 0'],['e2-c','是未定式，直接对乘积使用法则'],['e2-d','先写成 x/2ˣ，确认是 ∞/∞ 型，再检验使用条件']],correctOptionId:'e2-d',explanation:'0·∞ 型乘积先写成 x/2ˣ。检验条件后求导得到 1/(2ˣ ln 2)，极限为 0；指数函数的底数改变不影响“先变形成分式”的要求。'},
+    {id:'post-3',dimension:'结论有效性',question:'求 x→+∞ 时 (4x−cos(3x))/x 的极限。导数比为 4+3sin(3x)，没有极限。正确的结论是？',options:[['e3-a','法则不给结论，写成 4−cos(3x)/x，原极限为 4'],['e3-b','导数比没有极限，原极限也不存在'],['e3-c','原极限就是 4+3sin(3x)'],['e3-d','把 sin(3x) 当作 1，原极限为 7']],correctOptionId:'e3-a',explanation:'导数比振荡时需要换方法，不能反推原极限不存在。cos(3x) 有界，cos(3x)/x→0，故原极限为 4。'},
+    {id:'post-4',dimension:'每步再检验',question:'求 x→0 时 (e²ˣ−1)/(eˣ−1) 的极限。用一次法则得到 2e²ˣ/eˣ，下一步应该？',options:[['e4-a','再求导一次，得到 4e²ˣ/eˣ，极限为 4'],['e4-b','仍是 0/0 型，应继续使用法则'],['e4-c','新分子趋于 2、新分母趋于 1，直接代入得 2'],['e4-d','原极限不存在']],correctOptionId:'e4-c',explanation:'新分式为 2/1，已经是确定值，应停止使用法则，极限为 2。未经检验再次求导得到 4 是误用。'}
+  ]}].map(form=>({...form,items:form.items.map(item=>({...item,variantId:`${item.id}-${form.id}`,formId:form.id}))}));
+  const POSTTEST_ITEMS=POSTTEST_FORMS[0].items; // Four stable dimensions; each round selects its questions from POSTTEST_FORMS.
+  function selectPosttestForm(round){
+    const index=Math.max(0,Math.floor(Number(round)||1)-1);
+    return {form:POSTTEST_FORMS[index%POSTTEST_FORMS.length],isReview:index>=POSTTEST_FORMS.length};
+  }
+  const $=id=>document.getElementById(id);
+  function element(tag,className,textValue){const node=document.createElement(tag);if(className)node.className=className;if(textValue!==undefined)node.textContent=textValue;return node;}
+  const SUPERSCRIPTS={'⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁺':'+','⁻':'−','ˣ':'x'};
+  const MATH_FRACTIONS=[
+    ['(eˣ−1)/(2x)','eˣ−1','2x'],['eˣ/2','eˣ','2'],['ln x/(1/x²)','ln x','x⁻²'],['−x²/2','−x²','2'],
+    ['(x−sin x)/x','x−sin x','x'],['(1−cos x)/x²','1−cos x','x²'],['sin x/(2x)','sin x','2x'],
+    ['ln x/(x+1)','ln x','x+1'],['(1/x)/1','x⁻¹','1'],['x²/eˣ','x²','eˣ'],['2x/eˣ','2x','eˣ'],
+    ['(x²+sin(x²))/x²','x²+sin(x²)','x²'],['sin(x²)/x²','sin(x²)','x²'],
+    ['(eˣ−1)/(3x+x²)','eˣ−1','3x+x²'],['eˣ/(3+2x)','eˣ','3+2x'],
+    ['(3x+1)/(x+4)','3x+1','x+4'],['ln x/eˣ','ln x','eˣ'],['(1/x)/eˣ','x⁻¹','eˣ'],
+    ['(3x+sin(2x))/(2x)','3x+sin(2x)','2x'],['(3+2cos(2x))/2','3+2cos(2x)','2'],['sin(2x)/(2x)','sin(2x)','2x'],
+    ['ln(1+x)/(x+x²)','ln(1+x)','x+x²'],['1/((1+x)(1+2x))','1','(1+x)(1+2x)'],
+    ['(cos x+2)/(x+1)','cos x+2','x+1'],['x/2ˣ','x','2ˣ'],['1/(2ˣ ln 2)','1','2ˣ ln 2'],
+    ['(4x−cos(3x))/x','4x−cos(3x)','x'],['cos(3x)/x','cos(3x)','x'],
+    ['(e²ˣ−1)/(eˣ−1)','e²ˣ−1','eˣ−1'],['2e²ˣ/eˣ','2e²ˣ','eˣ'],['4e²ˣ/eˣ','4e²ˣ','eˣ'],
+    ['1/(2x)','1','2x'],['3/2','3','2'],['1/3','1','3'],['1/1','1','1'],['3/1','3','1'],['2/1','2','1'],['0/2','0','2'],
+    ['(1−cos x)′/(x²+x)′','(1−cos x)′','(x²+x)′'],['(x²+1)′/(x+1)′','(x²+1)′','(x+1)′'],
+    ['(sin x)′/(2x+1)′','(sin x)′','(2x+1)′'],['(x+sin x)′/x′','(x+sin x)′','x′'],
+    ['(ln x)′/(1/x)′','(ln x)′','(1/x)′'],['(eˣ−1)′ / x′','(eˣ−1)′','x′'],
+    ['(sin x+1)/(x+2)','sin x+1','x+2'],['(2x+cos x)/x','2x+cos x','x'],
+    ['(1−cos x)/(x²+x)','1−cos x','x²+x'],['(x²+1)/(x+1)','x²+1','x+1'],
+    ['(x+sin x)/x','x+sin x','x'],['(eˣ−1)/x','eˣ−1','x'],
+    ['sin x/(x²+x)','sin x','x²+x'],['ln x/(1/x)','ln x','x⁻¹'],
+    ['(1/x)/(−1/x²)','x⁻¹','−x⁻²'],['x/(1/ln x)','x','(ln x)⁻¹'],
+    ['sin x/(2x+1)','sin x','2x+1'],['cos x/(2x+1)','cos x','2x+1'],
+    ['(1+cos x)/1','1+cos x','1'],['sin x/x','sin x','x'],['cos x/x','cos x','x'],
+    ['−sin x/2','−sin x','2'],['−1/x²','−1','x²'],['1/x²','1','x²'],
+    ['x/eˣ','x','eˣ'],['eˣ / 1','eˣ','1'],['eˣ/1','eˣ','1'],['2x/1','2x','1'],
+    ['cos x/2','cos x','2'],['cos x/1','cos x','1'],['ln x/x','ln x','x'],
+    ['1/x','1','x'],['2/2','2','2'],['1/2','1','2']
+  ].sort((a,b)=>b[0].length-a[0].length);
+  function appendMathVisual(parent,source,allowFractions=true){
+    let plain='',index=0;
+    const flush=()=>{if(plain){parent.append(element('span','',plain));plain='';}};
+    while(index<source.length){
+      const formula=allowFractions?MATH_FRACTIONS.find(([raw])=>source.startsWith(raw,index)):null;
+      if(formula){
+        flush();const fraction=element('span','math-frac');
+        const top=element('span','math-num'),bottom=element('span','math-den');
+        appendMathVisual(top,formula[1],false);appendMathVisual(bottom,formula[2],false);
+        fraction.append(top,bottom);parent.append(fraction);index+=formula[0].length;continue;
+      }
+      if(SUPERSCRIPTS[source[index]]){
+        flush();let superscript='';
+        while(index<source.length&&SUPERSCRIPTS[source[index]])superscript+=SUPERSCRIPTS[source[index++]];
+        parent.append(element('sup','',superscript));continue;
+      }
+      plain+=source[index++];
+    }
+    flush();
+  }
+  function setRichText(node,value){
+    const raw=String(value??'');
+    if(!/[\/⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻ˣ]/u.test(raw)){node.textContent=raw;return node;}
+    const source=element('span','sr-only',raw),visual=element('span','math-visual');
+    visual.setAttribute?.('aria-hidden','true');appendMathVisual(visual,raw);
+    node.replaceChildren(source,visual);return node;
+  }
+  function richElement(tag,className,value){return setRichText(element(tag,className),value);}
+  function addText(parent,tag,className,value){const node=richElement(tag,className,value);parent.append(node);return node;}
+  function makeLimitExpression(caseData){
+    const formula=element('span','case-formula'),limit=element('span','math-lim');
+    limit.append(element('span','','lim'),richElement('sub','',caseData.limit));
+    formula.append(limit,richElement('span','math-expression',caseData.expression));return formula;
+  }
+  function makeButton(label,action,variant=''){const button=richElement('button','action-btn '+variant,label);button.type='button';button.addEventListener('click',action);return button;}
+  function shuffle(items){const arr=[...items];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+  function shuffleDifferent(items){const shuffled=shuffle(items);if(shuffled.every((item,index)=>item===items[index]))[shuffled[0],shuffled[1]]=[shuffled[1],shuffled[0]];return shuffled;}
+  function makeChoices(parent,name,options){const box=element('div','option-list');for(const [id,label] of options){const row=element('label','option');const input=element('input');input.type='radio';input.name=name;input.value=id;row.append(input,richElement('span','',label));box.append(row);}parent.append(box);return box;}
+  function selectedValue(name){return document.querySelector(`input[name="${name}"]:checked`)?.value||null;}
+  function formatNumber(number){return Number.isFinite(number)?Number(number).toPrecision(6):'—';}
+  function makeSessionId(){try{if(window.crypto?.getRandomValues){const bytes=new Uint8Array(12);crypto.getRandomValues(bytes);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');}}catch(_error){}return `s${Date.now().toString(36)}${Math.floor(Math.random()*1e8).toString(36)}`.slice(0,40);}
+  function parseIntegrationParams(){
+    const params=new URLSearchParams(window.location.search);
+    if(params.get('integration')!=='chaoxing-agent')return null;
+    const rawCase=params.get('case');
+    const caseId=CASE_IDS.includes(rawCase)?rawCase:null;
+    params.get('entry');params.get('skipPretest'); // Legacy parameters are accepted but do not control this mode.
+    const rawDiagnosis=(params.get('diagnosis')||'').split(',').map(item=>item.trim());
+    const diagnosis=DIAGNOSIS_ORDER.filter(tag=>rawDiagnosis.includes(tag)).slice(0,3);
+    const rawHint=params.get('hintProfile');
+    const hintProfile=['support','normal','challenge'].includes(rawHint)?rawHint:'normal';
+    const rawSession=params.get('session')||'';
+    const sessionId=/^[A-Za-z0-9_-]{1,40}$/.test(rawSession)?rawSession:makeSessionId();
+    return {integration:'chaoxing-agent',caseId,entry:'practice',diagnosis,hintProfile,sessionId};
+  }
+  function createLearningSession(config){return{
+    phase:'interaction',caseId:null,pathMode:null,
+    pretest:[],decisions:[],posttest:[],hintProfile:config?.hintProfile||'normal',currentHintProfile:config?.hintProfile||'normal',
+    hintFading:{start:config?.hintProfile||'normal',end:config?.hintProfile||'normal',changes:[]},independentStreak:0,
+    startedAt:Date.now(),completedAt:null,posttestCompleted:false,integration:config?.integration||null,
+    sessionId:config?.sessionId||null,diagnosis:config?[...config.diagnosis]:[],entryMode:config?.entry||null,
+    pretestSkipped:config?.entry==='practice',studentId:null,summaryPostedForCompletion:null,
+    lastRenderedSummary:null,lastPostedStudentId:null,nodes:{},gates:[],fadeNotice:'',
+    round:1,pretestCarriedFrom:null,practicedCaseIds:[],posttestForm:null
+  };}
+  const integrationConfig=parseIntegrationParams();
+  const summaryDebug=new URLSearchParams(window.location.search).get('debug')==='1';
+  const SUMMARY_LINES_KEY='xphs.summaryLines.lhopital';
+  let savedSummaryLines=loadSavedSummaryLines();
+  let usageMode=integrationConfig?'student':'teacher';
+  let learningSession=createLearningSession(integrationConfig);
+  let currentCaseId=null,currentNodeIndex=0,currentGate=null,derivativeVisible=false,resultVisible=false,conclusionVisible=false;
+  let flowchartOpen=false,flowchartCaseId=null,flowchartShowMisuse=true;
+  let pretestIndex=0,pretestQueue=[],posttestIndex=0,posttestQueue=[];
+  function modeLabel(){return usageMode==='teacher'?'教师演示':learningSession.integration==='chaoxing-agent'?'智能体协作':'自主学习';}
+  function startStandaloneStudy(){
+    if(usageMode!=='teacher')return;
+    usageMode='student';learningSession=createLearningSession(null);
+    learningSession.entryMode='full';learningSession.pretestSkipped=false;learningSession.sessionId=makeSessionId();
+    currentCaseId=null;currentGate=null;currentNodeIndex=0;derivativeVisible=false;resultVisible=false;conclusionVisible=false;
+    flowchartOpen=false;flowchartCaseId=null;flowchartShowMisuse=true;
+    $('flowchart-anchor').replaceChildren();$('flowchart-trigger').replaceChildren();
+    $('mode-chip').textContent=modeLabel();$('intro').textContent='先完成课件前测，再按推荐案例逐节点作答。';
+    $('student-mode-button').hidden=true;$('case-selector').hidden=true;
+    startPretest();
+  }
+  function recommendCase(diagnosis){return CASE_FOR_DIAGNOSIS[DIAGNOSIS_ORDER.find(tag=>diagnosis.includes(tag))]||'exp-basic';}
+  function selectInitialCase(){return integrationConfig?.caseId||recommendCase(learningSession.diagnosis);}
+  function setHintProfileAfterNode(gate){
+    if(usageMode!=='student')return;
+    if(currentNodeIndex>=CASES[currentCaseId].path.length-1)return;
+    const order=['support','normal','challenge'];let profile=learningSession.currentHintProfile;
+    if(gate.attempts>1||gate.mastery==='review'){
+      learningSession.independentStreak=0;
+      const next=order[Math.max(0,order.indexOf(profile)-1)];
+      if(next!==profile){learningSession.hintFading.changes.push({afterNode:gate.nodeId,from:profile,to:next,cause:'wrong-answer'});learningSession.currentHintProfile=next;learningSession.fadeNotice='这一步有点难，接下来会多给一点提示。';}
+    }else{
+      learningSession.independentStreak++;
+      if(learningSession.independentStreak>=2){
+        learningSession.independentStreak=0;
+        const next=order[Math.min(2,order.indexOf(profile)+1)];
+        if(next!==profile){learningSession.hintFading.changes.push({afterNode:gate.nodeId,from:profile,to:next,cause:'two-independent'});learningSession.currentHintProfile=next;learningSession.fadeNotice='你已经连续独立答对，接下来提示会少一些。';}
+      }
+    }
+    learningSession.hintFading.end=learningSession.currentHintProfile;
+  }
+  function startCase(caseId){
+    currentCaseId=CASE_IDS.includes(caseId)?caseId:'exp-basic';currentNodeIndex=0;currentGate=null;derivativeVisible=false;resultVisible=false;conclusionVisible=false;
+    flowchartCaseId=currentCaseId;flowchartOpen=false;flowchartShowMisuse=true;$('flowchart-anchor').replaceChildren();renderTeacherFlowchartTrigger();
+    learningSession.caseId=currentCaseId;learningSession.phase='interaction';learningSession.nodes={};learningSession.decisions=[];learningSession.gates=[];
+    learningSession.posttest=[];learningSession.posttestCompleted=false;learningSession.completedAt=null;learningSession.lastRenderedSummary=null;learningSession.summaryPostedForCompletion=null;
+    learningSession.posttestForm=null;posttestQueue=[];posttestIndex=0;
+    $('pretest-panel').hidden=true;$('posttest-panel').hidden=true;$('report-panel').hidden=true;$('learning-shell').hidden=false;$('misuse-panel').hidden=true;$('misuse-content').replaceChildren();
+    const caseHeading=$('case-heading'),caseData=CASES[currentCaseId];
+    caseHeading.replaceChildren(element('strong','case-label','案例'),element('span','','：'),makeLimitExpression(caseData));
+    enterNode();
+  }
+  function renderProgress(){
+    const row=$('progress-row');row.replaceChildren();
+    const caseData=CASES[currentCaseId];if(!caseData)return;
+    const sequence=['N1','N2','N3'];
+    if(caseData.transform)sequence.push('T');
+    if(caseData.derivative)sequence.push('D','N4');
+    if(caseData.path.includes('R'))sequence.push('R');
+    const currentIndex=conclusionVisible?sequence.length:sequence.indexOf(currentGate?.nodeId);
+    const visible=conclusionVisible?sequence:sequence.slice(0,Math.max(0,currentIndex)+1);
+    let currentItem=null;
+    for(const key of visible){
+      const operation=key==='T'||key==='D',active=!conclusionVisible&&key===currentGate?.nodeId;
+      const mastery=operation?'':learningSession.nodes[key]?.mastery||'';
+      const item=element('span',`path-item ${operation?'path-operation':'path-node'} ${mastery} ${active?'current':''}`.trim());
+      item.dataset.pathKey=key;
+      item.append(element('span','path-symbol'),element('span','',operation?(key==='T'?'变形':'求导'):PATH_LABELS[key]));
+      if(active){item.setAttribute('aria-current','step');currentItem=item;}
+      row.append(item);
+    }
+    if(!conclusionVisible)row.append(element('span','path-ellipsis','…'));
+    if(currentItem)requestAnimationFrame(()=>currentItem.scrollIntoView({block:'nearest',inline:'nearest'}));
+  }
+  function renderHint(){
+    const hint=$('node-hint');if(!hint||!currentGate)return;
+    hint.replaceChildren();
+    const level=currentGate.hintLevelMax;
+    hint.hidden=level===0;
+    if(level===1)setRichText(hint,`方向提示：${HINT_ONE[currentGate.nodeId]}`);
+    if(level===2)setRichText(hint,`指向性提示：${currentGate.spec.hint2}`);
+    if(level===3){
+      const correctText=ANSWER_OPTIONS[currentGate.nodeId].find(([id])=>id===currentGate.spec.answer)?.[1];
+      setRichText(hint,`揭示答案：判断选“${correctText}”；理由是“${currentGate.spec.reasons[0]}”。`);
+    }
+  }
+  function enterNode(){
+    const caseData=CASES[currentCaseId],nodeId=caseData.path[currentNodeIndex],specification=caseData.nodes[nodeId];
+    const profile=learningSession.currentHintProfile;
+    currentGate={nodeId,spec:specification,attempts:0,hintLevelMax:profile==='support'?1:0,attemptLog:[],reasonOrder:shuffle([0,1,2]),mastery:null};
+    learningSession.gates.push(currentGate);
+    const card=$('node-card');card.replaceChildren();
+    const notice=$('fade-notice');notice.hidden=!learningSession.fadeNotice;notice.textContent=learningSession.fadeNotice;learningSession.fadeNotice='';
+    card.append(element('span','tag',NODE_DIMENSIONS[nodeId]));
+    if(usageMode==='student')card.append(element('span','tag hint-profile-badge',`提示档位：${HINT_PROFILE_LABELS[profile]}`));
+    const formulaHeading=element('h2','section-gap');formulaHeading.append(makeLimitExpression(caseData));card.append(formulaHeading);
+    addText(card,'p','question',nodeId==='N1'?'先识别：原式趋于什么类型？':nodeId==='N2'?'这个类型满足法则的使用条件吗？':nodeId==='N3'?'此时应该怎样决策？':nodeId==='N4'?'得到新式后，下一步怎样做？':'导数比没有极限，原极限该怎么办？');
+    addText(card,'label','field-label','选择判断');
+    makeChoices(card,'node-answer',ANSWER_OPTIONS[nodeId]);
+    addText(card,'label','field-label','选择理由');
+    const reasonOptions=currentGate.reasonOrder.map(index=>[`${currentCaseId}-${nodeId.toLowerCase()}-r${index+1}`,specification.reasons[index]]);
+    makeChoices(card,'node-reason',reasonOptions);
+    const actions=element('div','action-row');actions.append(makeButton('提交判断与理由',submitNode,'orange'));
+    if(usageMode==='teacher')actions.append(makeButton('揭示答案',revealTeacherAnswer,'secondary'));
+    card.append(actions);
+    const feedback=addText(card,'div','decision-feedback','');feedback.id='node-feedback';feedback.hidden=true;
+    const hint=addText(card,'div','hint-box','');hint.id='node-hint';renderHint();
+    if(usageMode==='teacher'&&caseData.misuseFn)card.append(makeButton('展开／收起误用对照',toggleTeacherMisuse,'secondary'));
+    renderProgress();updateSidePanels();
+  }
+  function recordLearningDecision(gate,answer,reasonId,answerCorrect,reasonCorrect,correct,hintLevelShown){
+    const reasonIndex=Number(reasonId?.match(/-r([1-3])$/)?.[1]||0)-1;
+    const record={answer,reasonId,answerCorrect,reasonCorrect,hintLevelShown};
+    gate.attemptLog.push(record);
+    learningSession.decisions.push({caseId:currentCaseId,nodeId:gate.nodeId,dimension:NODE_DIMENSIONS[gate.nodeId],attempts:gate.attempts,
+      answer,reasonId,reasonText:gate.spec.reasons[reasonIndex]||null,answerCorrect,reasonCorrect,correct,hintLevelShown,
+      hintLevelMax:gate.hintLevelMax,mastery:gate.mastery});
+  }
+  function submitNode(){
+    if(!currentGate)return;
+    const answer=selectedValue('node-answer'),reasonId=selectedValue('node-reason');const feedback=$('node-feedback');
+    if(!answer||!reasonId){feedback.hidden=false;feedback.className='decision-feedback error';feedback.textContent='先选判断和理由，再提交。';return;}
+    const gate=currentGate,hintLevelShown=gate.hintLevelMax;
+    gate.attempts++;
+    const answerCorrect=answer===gate.spec.answer;
+    const reasonCorrect=reasonId===`${currentCaseId}-${gate.nodeId.toLowerCase()}-r1`;
+    const correct=answerCorrect&&reasonCorrect;
+    if(correct){
+      gate.mastery=gate.attempts===1?'independent':'assisted';
+      recordLearningDecision(gate,answer,reasonId,true,true,true,hintLevelShown);
+      finishNode(gate,answer,reasonId,true,true,true);
+      feedback.hidden=false;feedback.className='decision-feedback success';feedback.textContent='判断和依据都正确。';
+      return;
+    }
+    gate.hintLevelMax=Math.min((learningSession.currentHintProfile==='support'?1:0)+gate.attempts,3);
+    if(gate.hintLevelMax===3)gate.mastery='review';
+    recordLearningDecision(gate,answer,reasonId,answerCorrect,reasonCorrect,false,hintLevelShown);
+    feedback.hidden=false;feedback.className='decision-feedback error';
+    feedback.textContent=answerCorrect?'判断对了，但依据不对，再想想为什么。':'判断还不对。先核对条件，再决定下一步。';
+    renderHint();
+    if(gate.hintLevelMax===3){
+      finishNode(gate,answer,reasonId,false,answerCorrect,reasonCorrect);
+      feedback.textContent+=' 答案已揭示，读完后继续。';
+    }
+    else if(flowchartOpen)renderFlowchart();
+  }
+  function finishNode(gate,answer,reasonId,correct,answerCorrect,reasonCorrect){
+    const reasonIndex=Number(reasonId?.match(/-r([1-3])$/)?.[1]||0)-1;
+    learningSession.nodes[gate.nodeId]={dimension:NODE_DIMENSIONS[gate.nodeId],correct,answerCorrect,reasonCorrect,mastery:gate.mastery,
+      attempts:gate.attempts,hintUsed:gate.hintLevelMax>0,hintLevelMax:gate.hintLevelMax,answer,reasonId,
+      reasonText:gate.spec.reasons[reasonIndex]||null,attemptLog:gate.attemptLog.map(item=>({...item}))};
+    setHintProfileAfterNode(gate);
+    const card=$('node-card');card.querySelectorAll('input').forEach(input=>input.disabled=true);
+    const actionRow=card.querySelector('.action-row');actionRow.replaceChildren(makeButton(gate.mastery==='review'?'我看懂了，继续':'继续',advanceNode,'orange'));
+    renderProgress();if(flowchartOpen)renderFlowchart();
+  }
+  function revealTeacherAnswer(){
+    if(usageMode!=='teacher'||!currentGate)return;
+    currentGate.hintLevelMax=3;renderHint();
+    const card=$('node-card');card.querySelectorAll('input').forEach(input=>input.disabled=true);
+    card.querySelector('.action-row').replaceChildren(makeButton('继续',advanceNode,'orange'));
+  }
+  function advanceNode(){
+    const nodeId=currentGate.nodeId,caseData=CASES[currentCaseId];
+    if(nodeId==='N3'&&caseData.derivative)derivativeVisible=true;
+    if(nodeId==='N4'&&currentCaseId!=='x-sinx')resultVisible=true;
+    if(nodeId==='R'||(nodeId==='N3'&&!caseData.derivative))resultVisible=true;
+    currentNodeIndex++;
+    if(currentNodeIndex>=caseData.path.length){showConclusion();return;}
+    enterNode();
+  }
+  function showConclusion(){
+    conclusionVisible=true;resultVisible=true;currentGate=null;learningSession.phase='conclusion';
+    const caseData=CASES[currentCaseId],card=$('node-card');card.replaceChildren();
+    card.append(element('span','tag','结论'));addText(card,'h2','section-gap',caseData.conclusion);
+    if(currentCaseId==='exp-basic'&&usageMode==='teacher')card.append(makeButton('挑战：x→∞ 时 (x+sin x)/x',()=>startCase('x-sinx')));
+    if(usageMode==='student')card.append(makeButton('进入课件后测（4 题）',startPosttest,'orange'));
+    else if(caseData.misuseFn)card.append(makeButton('展开／收起误用对照',toggleTeacherMisuse,'secondary'));
+    renderProgress();updateSidePanels();
+    if(caseData.misuseFn){$('misuse-panel').hidden=false;renderMisuse();}
+    openFlowchart();
+  }
+  const FLOW_NODES=[
+    {key:'N1',x:85,y:12,w:150,h:44,lines:['N1 识别类型']},
+    {key:'N2',x:85,y:84,w:150,h:44,lines:['N2 验证条件']},
+    {key:'N3',x:105,y:157,w:110,h:47,lines:['N3 决策']},
+    {key:'E1',x:8,y:246,w:96,h:47,lines:['出口①','代入得结果']},
+    {key:'T',x:117,y:246,w:86,h:44,lines:['变形']},
+    {key:'D',x:115,y:338,w:90,h:44,lines:['求导']},
+    {key:'N4',x:88,y:430,w:144,h:47,lines:['N4 求导后','再检验']},
+    {key:'E2',x:8,y:536,w:96,h:50,lines:['出口②','代入得结果']},
+    {key:'R',x:190,y:536,w:120,h:50,lines:['R 失效后回退']},
+    {key:'E3',x:10,y:641,w:150,h:50,lines:['出口③','换方法求原极限']},
+    {key:'X',x:180,y:641,w:130,h:50,lines:['原极限不存在 ✗']}
+  ];
+  const FLOW_EDGES=[
+    {id:'fc-e-N1-N2',d:'M160 56 L160 84'},
+    {id:'fc-e-N2-N3',d:'M160 128 L160 157'},
+    {id:'fc-e-N3-E1',d:'M105 181 L56 181 L56 246',label:'c',lx:66,ly:222},
+    {id:'fc-e-N3-T',d:'M160 204 L160 246',label:'b',lx:171,ly:228},
+    {id:'fc-e-N3-D',d:'M215 181 L293 181 L293 359 L205 359',label:'a',lx:280,ly:209},
+    {id:'fc-e-T-D',d:'M160 290 L160 338'},
+    {id:'fc-e-D-N4',d:'M160 382 L160 430'},
+    {id:'fc-e-N4-D',d:'M232 453 L302 453 L302 370 L205 370',label:'a',lx:289,ly:427},
+    {id:'fc-e-N4-E2',d:'M88 453 L56 453 L56 536',label:'b',lx:67,ly:500},
+    {id:'fc-e-N4-R',d:'M232 453 L250 453 L250 536',label:'c',lx:262,ly:500},
+    {id:'fc-e-R-E3',d:'M220 586 L220 608 L85 608 L85 641',label:'b',lx:140,ly:602},
+    {id:'fc-e-R-X',d:'M278 586 L245 641',label:'a',lx:277,ly:616}
+  ];
+  const FLOW_MISUSE_LABELS={
+    'fc-e-N3-D':{x:290,y:311},
+    'fc-e-N4-D':{x:292,y:407},
+    'fc-e-R-X':{x:307,y:627}
+  };
+  function svgElement(tag,attributes,textValue){
+    const node=document.createElementNS('http://www.w3.org/2000/svg',tag);
+    for(const [name,value] of Object.entries(attributes||{}))node.setAttribute(name,String(value));
+    if(textValue!==undefined)node.textContent=textValue;
+    return node;
+  }
+  function renderTeacherFlowchartTrigger(){
+    const box=$('flowchart-trigger');box.replaceChildren();
+    if(usageMode==='teacher')box.append(makeButton(flowchartOpen?'收起全景流程图':'展开全景流程图',toggleTeacherFlowchart,'secondary'));
+  }
+  function toggleTeacherFlowchart(){
+    if(usageMode!=='teacher')return;
+    if(flowchartOpen){flowchartOpen=false;$('flowchart-anchor').replaceChildren();renderTeacherFlowchartTrigger();}
+    else openFlowchart();
+  }
+  function openFlowchart(){
+    if(usageMode==='student'&&!conclusionVisible)return;
+    flowchartOpen=true;
+    const anchor=$('flowchart-anchor');anchor.replaceChildren();
+    const panel=element('section','panel-card flowchart-card');panel.id='flowchart-panel';anchor.append(panel);
+    renderFlowchart();renderTeacherFlowchartTrigger();
+  }
+  function showFlowchartCase(caseId){
+    if(usageMode!=='teacher'||!CASE_IDS.includes(caseId)||!flowchartOpen)return;
+    flowchartCaseId=caseId;renderFlowchart();
+  }
+  function toggleFlowchartMisuse(){
+    if(usageMode!=='teacher'||!flowchartOpen)return;
+    flowchartShowMisuse=!flowchartShowMisuse;renderFlowchart();
+  }
+  function flowchartAttemptLog(nodeId,caseId){
+    if(caseId!==currentCaseId)return [];
+    return learningSession.nodes[nodeId]?.attemptLog||
+      (currentGate?.nodeId===nodeId?currentGate.attemptLog:[])||[];
+  }
+  function renderFlowchart(){
+    const panel=$('flowchart-panel');if(!panel||!flowchartOpen)return;
+    const caseId=flowchartCaseId||currentCaseId,caseData=CASES[caseId],config=caseData.flowchart;
+    const route=new Set(config.route),misuseEdge=flowchartShowMisuse?config.misuse?.edge:null;
+    panel.replaceChildren();
+    const header=element('div','flowchart-header');header.append(element('h3','','全景流程图'));
+    if(usageMode==='teacher'){
+      const misuseButton=makeButton(`显示误用路线：${flowchartShowMisuse?'开':'关'}`,toggleFlowchartMisuse,
+        `flowchart-misuse-toggle ${flowchartShowMisuse?'is-on':'is-off'}`);
+      misuseButton.id='flowchart-misuse-toggle';misuseButton.setAttribute('aria-pressed',flowchartShowMisuse?'true':'false');
+      header.append(misuseButton);
+    }
+    panel.append(header);
+    if(usageMode==='teacher'){
+      const controls=element('div','flowchart-controls');
+      for(const id of CASE_IDS){
+        const button=makeButton(CASES[id].name,()=>showFlowchartCase(id),'secondary flowchart-case-button'+(id===caseId?' active':''));
+        button.dataset.caseId=id;button.setAttribute('aria-pressed',id===caseId?'true':'false');controls.append(button);
+      }
+      panel.append(controls);
+    }
+    const legend=element('div','flowchart-legend');legend.setAttribute('aria-label','路线图例');
+    for(const [style,label] of [['correct','正确路线'],...(misuseEdge?[['misuse','误用路线']]:[]),['other','其他分支']]){
+      const item=element('span','flowchart-legend-item'),line=element('span',`flowchart-legend-line ${style}`);
+      line.setAttribute('aria-hidden','true');item.append(line,element('span','',label));legend.append(item);
+    }
+    panel.append(legend);
+    const svg=svgElement('svg',{id:'flowchart-svg',class:'flowchart-svg',viewBox:'0 0 320 710',width:'100%',role:'img','aria-label':`${caseData.name}的洛必达检验路线`});
+    const defs=svgElement('defs');
+    for(const [id,color] of [['fc-arrow-route','var(--blue)'],['fc-arrow-misuse','var(--bad)'],['fc-arrow-dim','var(--muted)']]){
+      const marker=svgElement('marker',{id,viewBox:'0 0 8 8',refX:7,refY:4,markerWidth:6,markerHeight:6,orient:'auto'});
+      marker.append(svgElement('path',{d:'M0 0 L8 4 L0 8 Z',fill:color,stroke:'none'}));defs.append(marker);
+    }
+    svg.append(defs);
+    for(const edge of FLOW_EDGES){
+      if(edge.id==='fc-e-R-X'&&caseId!=='x-sinx')continue;
+      const layer=route.has(edge.id)?'fc-route':edge.id===misuseEdge?'fc-misuse':'fc-dim';
+      const group=svgElement('g',{id:edge.id,class:layer});
+      group.append(svgElement('path',{d:edge.d}));
+      if(edge.label)group.append(svgElement('text',{x:edge.lx,y:edge.ly,'text-anchor':'middle'},edge.label));
+      svg.append(group);
+    }
+    const orangeDots=[];
+    for(const node of FLOW_NODES){
+      if(node.key==='X'&&caseId!=='x-sinx')continue;
+      const id=`fc-${node.key}`;
+      const misuseEndpoint=(node.key==='X'&&misuseEdge==='fc-e-R-X')||(node.key==='D'&&misuseEdge==='fc-e-N3-D');
+      const layer=route.has(id)?'fc-route':misuseEndpoint?'fc-misuse':'fc-dim';
+      const group=svgElement('g',{id,class:layer});
+      group.append(svgElement('rect',{x:node.x,y:node.y,width:node.w,height:node.h,rx:9}));
+      node.lines.forEach((line,index)=>group.append(svgElement('text',{x:node.x+node.w/2,y:node.y+node.h/2+(index-(node.lines.length-1)/2)*17+5,'text-anchor':'middle'},line)));
+      svg.append(group);
+      const first=flowchartAttemptLog(node.key,caseId)[0];
+      if(first&&(!first.answerCorrect||!first.reasonCorrect))
+        orangeDots.push(svgElement('circle',{id:`fc-miss-${node.key}`,class:'fc-attempt-dot fc-first-wrong',cx:node.x+node.w-4,cy:node.y+3,r:5}));
+    }
+    orangeDots.forEach(dot=>svg.append(dot));
+    if(misuseEdge&&config.misuse){
+      const position=FLOW_MISUSE_LABELS[misuseEdge];
+      svg.append(svgElement('text',{id:'fc-misuse-label',class:'fc-annotation',x:position.x,y:position.y,'text-anchor':'end'},config.misuse.label));
+    }
+    panel.append(svg);
+    if(usageMode==='teacher')panel.append(element('p','flowchart-note','五个案例，是这张图上的五条路线。'));
+    const trap=config.trap,first=trap?flowchartAttemptLog(trap.node,caseId)[0]:null;
+    if(misuseEdge&&first?.answer===trap.option)panel.append(element('p','flowchart-trap','你第一次的选择，正是红色虚线这条路。'));
+  }
+  function renderMisuse(){
+    const caseData=CASES[currentCaseId],box=$('misuse-content');box.replaceChildren();
+    if(!caseData.misuseFn)return;
+    const grid=element('div','compare-grid');
+    const right=element('div','compare-box');right.append(element('strong','','正确做法与结果'),richElement('span','',caseData.correctCompare));
+    const wrong=element('div','compare-box wrong');wrong.append(element('strong','','误用法则的后果'),richElement('span','',caseData.wrongCompare));
+    grid.append(right,wrong);box.append(grid);
+    if(caseData.compareStatement)box.append(richElement('p','note-box',caseData.compareStatement));
+    box.append(richElement('p','small',caseData.compareNote));
+  }
+  function toggleTeacherMisuse(){
+    if(usageMode!=='teacher'||!CASES[currentCaseId]?.misuseFn)return;
+    const panel=$('misuse-panel');panel.hidden=!panel.hidden;if(!panel.hidden)renderMisuse();
+    refreshNumberTable();
+  }
+  function comparisonTableVisible(){return Boolean(CASES[currentCaseId].misuseFn)&&(conclusionVisible||(usageMode==='teacher'&&!$('misuse-panel').hidden));}
+  function buildNumberTable(){
+    const caseData=CASES[currentCaseId],hasMisuse=Boolean(caseData.misuseFn),comparison=comparisonTableVisible(),table=element('table','data-table');
+    const head=element('thead'),hrow=element('tr');
+    hrow.append(element('th','',hasMisuse?'原函数的值':'x'),element('th','',hasMisuse?'误用式的值':'原函数的值'));
+    head.append(hrow);table.append(head);
+    const body=element('tbody');
+    for(const x of caseData.points){
+      const row=element('tr'),original=formatNumber(caseData.fn(x));
+      if(hasMisuse){
+        const originalCell=element('td');originalCell.append(element('span','sample-point',`x=${x}`),element('strong','sample-value',original));
+        row.append(originalCell,element('td','',comparison?formatNumber(caseData.misuseFn(x)):'结论后显示'));
+      }else row.append(element('td','',String(x)),element('td','',original));
+      body.append(row);
+    }
+    table.append(body);return table;
+  }
+  function refreshNumberTable(){
+    $('number-description').textContent=comparisonTableVisible()?'同一取点，逐行比较原函数与误用式。':'观察原函数在目标点附近的取值。';
+    $('number-table').replaceChildren(buildNumberTable());
+  }
+  function updateSidePanels(){
+    if(!currentCaseId)return;const caseData=CASES[currentCaseId],profile=learningSession.currentHintProfile,target=GRAPH_TARGETS[currentCaseId];
+    $('graph-target').textContent=currentCaseId==='x-sinx'&&derivativeVisible
+      ?'比较蓝线（原函数）与橙线（导数比）的趋势。'
+      :'沿横轴靠近目标，观察蓝线（原函数）的趋势。';
+    $('graph-limit').hidden=!conclusionVisible;
+    if(conclusionVisible)setRichText($('graph-limit'),`纵轴极限值：y=${target.y}（已在图中标出）`);
+    $('graph-window').hidden=currentCaseId!=='x-sinx';
+    if(currentCaseId==='x-sinx')$('graph-window').textContent='图像显示 x=1～60 的局部过程；数值表继续观察 x=100、1000、10000。';
+    $('graph').setAttribute?.('aria-label',`原函数图像，横轴目标 ${target.xLabel}${conclusionVisible?`，纵轴极限值 ${target.y}`:''}`);
+    $('checklist-panel').hidden=usageMode==='student'&&profile==='challenge';
+    $('checklist-details').open=profile==='support';
+    $('number-panel').hidden=usageMode==='student'&&profile==='challenge'&&!conclusionVisible;
+    refreshNumberTable();
+    const calc=$('calc-panel');calc.replaceChildren();
+    if(!derivativeVisible&&!resultVisible){calc.append(element('p','locked','先完成 N3 的决策，才会揭示求导或代入过程。'));}
+    else{
+      if(caseData.transform&&derivativeVisible)calc.append(richElement('div','calc-step',caseData.transform));
+      if(caseData.derivative&&derivativeVisible)calc.append(richElement('div','calc-step',caseData.derivative));
+      if(!resultVisible)calc.append(element('p','locked','先完成下一步检验，才揭示代入结果。'));
+      if(resultVisible)calc.append(richElement('div','calc-step',caseData.result));
+    }
+    requestAnimationFrame(drawGraph);
+  }
+  function drawGraph(){
+    if(!currentCaseId||$('learning-shell').hidden)return;
+    const canvas=$('graph'),rect=canvas.getBoundingClientRect(),width=rect.width,height=rect.height;if(width<10||height<10)return;
+    const dpr=window.devicePixelRatio||1;canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
+    const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+    const caseData=CASES[currentCaseId],target=GRAPH_TARGETS[currentCaseId],[xmin,xmax,ymin,ymax]=caseData.range;
+    const left=46,right=18,top=20,bottom=46,w=width-left-right,h=height-top-bottom,axisY=top+h;
+    const px=x=>left+(x-xmin)/(xmax-xmin)*w,py=y=>top+(ymax-y)/(ymax-ymin)*h;
+    const tick=value=>String(Number(value.toPrecision(3)));
+    ctx.clearRect(0,0,width,height);ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);
+    ctx.font='11px Segoe UI, sans-serif';ctx.lineWidth=1;
+    for(let i=0;i<=4;i++){
+      const y=top+i*h/4,value=ymax-(ymax-ymin)*i/4;
+      ctx.strokeStyle='#e2e8f0';ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(width-right,y);ctx.stroke();
+      ctx.fillStyle='#667085';ctx.fillText(tick(value),3,y+3);
+    }
+    ctx.strokeStyle='#8495a8';ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(left,axisY);ctx.lineTo(width-right,axisY);ctx.stroke();
+    ctx.fillStyle='#526478';ctx.fillText('y',left-11,top-6);ctx.fillText('x',width-right+5,axisY+4);
+    ctx.fillText(tick(xmin),left,axisY+36);ctx.fillText(tick(xmax),width-right-20,axisY+36);
+    function curve(fn,color){ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;let started=false;for(let i=0;i<=Math.max(200,Math.floor(w*2));i++){const x=xmin+(xmax-xmin)*i/Math.max(200,Math.floor(w*2));let y=fn(x);if(!Number.isFinite(y)||y<ymin-2*(ymax-ymin)||y>ymax+2*(ymax-ymin)){started=false;continue;}const xx=px(x),yy=py(y);if(started)ctx.lineTo(xx,yy);else{ctx.moveTo(xx,yy);started=true;}}ctx.stroke();}
+    curve(caseData.fn,'#4a6fa5');
+    if(currentCaseId==='x-sinx'&&derivativeVisible)curve(x=>1+Math.cos(x),'#ed8936');
+    if(Number.isFinite(target.x)){
+      const x=px(target.x);
+      ctx.save();ctx.setLineDash([4,4]);ctx.strokeStyle='#6988bb';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,axisY);ctx.stroke();ctx.restore();
+      ctx.fillStyle='#315888';ctx.fillText(target.xLabel,Math.max(left+4,Math.min(x+5,width-right-42)),axisY+18);
+      ctx.fillRect(x-2,axisY-2,4,4);
+    }else{
+      const arrowY=axisY;
+      ctx.strokeStyle='#315888';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(width-right-52,arrowY);ctx.lineTo(width-right-5,arrowY);
+      ctx.lineTo(width-right-12,arrowY-5);ctx.moveTo(width-right-5,arrowY);ctx.lineTo(width-right-12,arrowY+5);ctx.stroke();
+      ctx.fillStyle='#315888';ctx.fillText(target.xLabel,width-right-58,axisY+18);
+    }
+    if(conclusionVisible){
+      const y=py(target.y);
+      ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='#27805a';ctx.lineWidth=1.7;
+      ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(width-right,y);ctx.stroke();ctx.restore();
+      ctx.fillStyle='#27805a';ctx.fillRect(left-3,y-3,6,6);
+      ctx.fillText(`y=${target.y}`,Math.max(left+6,width-right-38),Math.max(top+11,y-7));
+      ctx.fillText(String(target.y),left-23,y-7);
+    }
+    const legend=$('graph-legend');legend.replaceChildren();const item=element('span');const line=element('i');line.style.background='#4a6fa5';item.append(line,element('span','','原函数'));legend.append(item);
+    if(currentCaseId==='x-sinx'&&derivativeVisible){const der=element('span');const mark=element('i');mark.style.background='#ed8936';der.append(mark,element('span','','导数比 1+cos x'));legend.append(der);}
+    if(conclusionVisible){const limit=element('span');const mark=element('i');mark.style.background='#27805a';limit.append(mark,element('span','',`极限 y=${target.y}`));legend.append(limit);}
+  }
+  window.addEventListener('resize',()=>requestAnimationFrame(drawGraph));
+  const PRETEST_ITEMS=[
+    {id:'P1',dimension:'程序题·求导',question:'求 (x²+1)′ 和 (x+1)′。',options:[['A','2x、1'],['B','2x+1、1'],['C','x²、x'],['D','2x、0']],correctAnswer:'A',program:true},
+    {id:'C1',dimension:'类型检验',question:'求 x→1 时 (x²+1)/(x+1) 的极限。有同学这样算：“用洛必达法则，得 2x/1，x→1 时为 2，所以极限是 2。”他说得对吗？',options:[['A','对'],['B','不对'],['C','无法判断']],correctAnswer:'B',tag:'lh-type-check',reasons:[['c1-r1','x→1 时分子、分母都趋于 2，非 0/0 或 ∞/∞ 型；直接代入得 1'],['c1-r2','分子分母都含 x，所以可以用洛必达法则'],['c1-r3','因为用了洛必达法则，所以这个说法一定不对']]},
+    {id:'P2',dimension:'程序题·求导',question:'求 (ln x)′ 和 (1/x)′。',options:[['A','1/x、−1/x²'],['B','1/x、1/x²'],['C','ln x/x、−1/x'],['D','x、−x']],correctAnswer:'A',program:true},
+    {id:'C2',dimension:'变形',question:'x→0⁺ 时 x·ln x 的极限，能直接用洛必达法则吗？',options:[['A','能，分别对 x 和 ln x 求导'],['B','不能直接用，要先写成 0/0 或 ∞/∞ 型的分式'],['C','不能用，这个极限求不出来'],['D','能，因为它是未定式']],correctAnswer:'B',tag:'lh-transform',reasons:[['c2-r1','这是 0·∞ 型，先写成 ln x/(1/x)，变成 ∞/∞ 型再用法则'],['c2-r2','可以对 x 和 ln x 两个因子分别求导'],['c2-r3','乘积不是分式，所以这个极限求不出来']]},
+    {id:'P3',dimension:'程序题·求导',question:'求 (x+sin x)′ 和 (x)′。',options:[['A','1+cos x、1'],['B','1−cos x、1'],['C','1+sin x、1'],['D','cos x、0']],correctAnswer:'A',program:true},
+    {id:'C3',dimension:'结论有效性',question:'求 x→∞ 时 (x+sin x)/x 的极限。有同学说：“这是 ∞/∞ 型，用洛必达法则得 1+cos x，它的极限不存在，所以原极限不存在。”他说得对吗？',options:[['A','对'],['B','不对'],['C','无法判断']],correctAnswer:'B',tag:'lh-reverse-inference',reasons:[['c3-r1','导数比的极限不存在时，法则不给结论；改写为 1+sin x/x 得 1'],['c3-r2','这不是 ∞/∞ 型，不能用洛必达法则'],['c3-r3','导数比没有极限，所以原极限也不存在']]},
+    {id:'E1',dimension:'每步再检验',question:'求 x→0 时 (1−cos x)/(x²+x) 的极限。有同学连续用了两次洛必达法则：第一次得 sin x/(2x+1)，第二次得 cos x/2，结论是 1/2。他说得对吗？',options:[['A','对'],['B','不对'],['C','无法判断']],correctAnswer:'B',tag:'lh-recheck',reasons:[['e1-r1','第一次用完后是 0/1 型，不能再用法则，应直接代入得 0'],['e1-r2','第一次是未定式，所以可以连续使用法则'],['e1-r3','第二次求导得 1/2，所以原极限也是 1/2']]}
+  ];
+  function startPretest(){
+    learningSession.phase='pretest';pretestIndex=0;pretestQueue=PRETEST_ITEMS.filter(item=>item.id!=='E1');
+    $('learning-shell').hidden=true;$('posttest-panel').hidden=true;$('report-panel').hidden=true;$('pretest-panel').hidden=false;
+    renderPretest();
+  }
+  function renderPretest(){
+    const item=pretestQueue[pretestIndex],panel=$('pretest-panel');panel.replaceChildren();
+    panel.append(element('span','tag',`课件前测 · ${pretestIndex+1}/${pretestQueue.length}`));
+    addText(panel,'h2','section-gap',item.id+(item.program?' · 求导':' · 条件判断'));
+    addText(panel,'p','question',item.question);
+    makeChoices(panel,'pre-answer',item.options);
+    if(item.reasons){addText(panel,'label','field-label','选出你的判断依据');makeChoices(panel,'pre-reason',shuffle(item.reasons));}
+    panel.append(makeButton('提交并继续',submitPretest,'orange'));
+    const feedback=addText(panel,'p','feedback-inline','');feedback.id='pretest-feedback';
+  }
+  function submitPretest(){
+    const item=pretestQueue[pretestIndex],answer=selectedValue('pre-answer'),reasonId=item.reasons?selectedValue('pre-reason'):null;
+    const feedback=$('pretest-feedback');
+    if(!answer||item.reasons&&!reasonId){feedback.textContent='先完成判断和理由，再提交。';return;}
+    const answerCorrect=answer===item.correctAnswer;
+    const reasonCorrect=item.reasons?reasonId===item.reasons[0][0]:null;
+    const correct=answerCorrect&&(reasonCorrect===null||reasonCorrect);
+    const reason=item.reasons?.find(([id])=>id===reasonId)?.[1]||null;
+    const wrongTag=correct?null:(item.id==='C3'&&answerCorrect&&reasonId==='c3-r2'?'lh-type-check':item.tag||null);
+    learningSession.pretest.push({id:item.id,dimension:item.dimension,answer,correctAnswer:item.correctAnswer,
+      answerCorrect,reasonId,reason,reasonCorrect,correct,wrongTag});
+    if(item.id==='C2'&&learningSession.pretest.some(record=>['C1','C2'].includes(record.id)&&record.correct))pretestQueue.push(PRETEST_ITEMS.find(entry=>entry.id==='E1'));
+    pretestIndex++;
+    if(pretestIndex<pretestQueue.length)renderPretest();else finishPretest();
+  }
+  function finishPretest(){
+    const programWrong=learningSession.pretest.filter(item=>item.id.startsWith('P')&&!item.correct).length;
+    const conditionWrong=learningSession.pretest.filter(item=>['C1','C2','C3'].includes(item.id)&&!item.correct).length;
+    const tags=learningSession.pretest.map(item=>item.wrongTag).filter(Boolean);
+    learningSession.diagnosis=DIAGNOSIS_ORDER.filter(tag=>tags.includes(tag)).slice(0,3);
+    const profile=programWrong>=2||conditionWrong>=2?'support':conditionWrong===1?'normal':'challenge';
+    learningSession.hintProfile=profile;learningSession.currentHintProfile=profile;
+    learningSession.hintFading={start:profile,end:profile,changes:[]};
+    const caseId=recommendCase(learningSession.diagnosis);
+    const panel=$('pretest-panel');panel.replaceChildren();
+    addText(panel,'h2','','前测完成');
+    const outcome=programWrong>0?'计算和条件判断都还需要练一练。':`这几道题，你的计算都没问题，但有 ${conditionWrong} 道题没有先检验条件就用了法则。`;
+    addText(panel,'p','note-box',outcome);
+    addText(panel,'p','small',`推荐案例：${CASES[caseId].name}；起始提示档位：${HINT_PROFILE_LABELS[profile]}。`);
+    panel.append(makeButton('进入推荐案例',()=>startCase(caseId),'orange'));
+  }
+  function startPosttest(){
+    if(learningSession.posttestCompleted){$('learning-shell').hidden=true;$('posttest-panel').hidden=true;$('report-panel').hidden=false;return;}
+    if(!learningSession.posttestForm){
+      const selection=selectPosttestForm(learningSession.round);
+      learningSession.posttestForm={formId:selection.form.id,bankVersion:POSTTEST_BANK_VERSION,isReview:selection.isReview};
+      posttestIndex=0;learningSession.posttest=[];
+      posttestQueue=selection.form.items.map(item=>({...item,shownOptions:shuffleDifferent(item.options)}));
+    }
+    learningSession.phase='posttest';
+    $('learning-shell').hidden=true;$('pretest-panel').hidden=true;$('report-panel').hidden=true;$('posttest-panel').hidden=false;
+    renderPosttest();
+  }
+  function renderPosttest(){
+    const item=posttestQueue[posttestIndex],panel=$('posttest-panel');panel.replaceChildren();
+    const form=learningSession.posttestForm;
+    panel.append(element('span','tag',`课件后测 · ${form.formId} 组${form.isReview?' · 复习题':''} · ${posttestIndex+1}/4 · ${item.dimension}`));
+    addText(panel,'h2','section-gap',item.question);
+    makeChoices(panel,'post-answer',item.shownOptions.map(([id,label],index)=>[id,`${'ABCD'[index]}. ${label}`]));
+    const label=addText(panel,'label','field-label','你的依据（一句话）');label.htmlFor='post-reason';
+    const input=element('input','text-field');input.id='post-reason';input.placeholder='先写一句你的依据';input.maxLength=120;panel.append(input);
+    panel.append(makeButton('提交本题',submitPosttest,'orange'));
+    const feedback=addText(panel,'div','decision-feedback','');feedback.id='posttest-feedback';feedback.hidden=true;
+    const submitted=learningSession.posttest[posttestIndex];
+    if(submitted){
+      const selectedId=item.shownOptions['ABCD'.indexOf(submitted.answer)]?.[0];
+      panel.querySelectorAll('input').forEach(input=>{if(input.name==='post-answer')input.checked=input.value===selectedId;});
+      input.value=submitted.reason;renderPosttestFeedback(item,submitted);
+    }
+  }
+  function submitPosttest(){
+    const item=posttestQueue[posttestIndex],selected=selectedValue('post-answer'),reason=$('post-reason').value;
+    if(!item||learningSession.posttest.some(record=>record.id===item.id))return;
+    const feedback=$('posttest-feedback');
+    if(!selected){feedback.hidden=false;feedback.className='decision-feedback error';feedback.textContent='先选一个答案。';return;}
+    if(Array.from(reason.trim()).length<4){feedback.hidden=false;feedback.className='decision-feedback error';feedback.textContent='先写一句你的依据';return;}
+    if(Array.from(reason.trim()).length>120){feedback.hidden=false;feedback.className='decision-feedback error';feedback.textContent='依据最多 120 个字符。';return;}
+    const answer='ABCD'[item.shownOptions.findIndex(([id])=>id===selected)];
+    const correctAnswer='ABCD'[item.shownOptions.findIndex(([id])=>id===item.correctOptionId)];
+    const correct=selected===item.correctOptionId;
+    const record={id:item.id,dimension:item.dimension,answer,correctAnswer,correctOptionId:item.correctOptionId,correct,reason,
+      variantId:item.variantId,formId:item.formId,bankVersion:POSTTEST_BANK_VERSION,isReview:learningSession.posttestForm.isReview,
+      question:item.question,answerText:item.shownOptions.find(([id])=>id===selected)[1],
+      correctAnswerText:item.options.find(([id])=>id===item.correctOptionId)[1],
+      shownOptions:item.shownOptions.map(([id,text],index)=>({id,label:'ABCD'[index],text})),explanation:item.explanation};
+    learningSession.posttest.push(record);renderPosttestFeedback(item,record);
+  }
+  function renderPosttestFeedback(item,record){
+    const feedback=$('posttest-feedback');
+    $('posttest-panel').querySelectorAll('input,button').forEach(control=>control.disabled=true);
+    feedback.hidden=false;feedback.className='decision-feedback '+(record.correct?'success':'error');
+    setRichText(feedback,`${record.correct?'回答正确。':`回答错误，正确选项是 ${record.correctAnswer}。`}${record.explanation}`);
+    $('posttest-panel').append(makeButton(posttestIndex===3?(learningSession.integration==='chaoxing-agent'?'完成练习':'查看学习报告'):'下一题',advancePosttest,'orange'));
+  }
+  function advancePosttest(){if(!learningSession.posttest[posttestIndex])return;posttestIndex++;if(posttestIndex<posttestQueue.length)renderPosttest();else finishPosttest();}
+  function finishPosttest(){
+    learningSession.posttestCompleted=true;learningSession.phase='complete';learningSession.completedAt=Date.now();
+    if(!learningSession.practicedCaseIds.includes(currentCaseId))learningSession.practicedCaseIds.push(currentCaseId);
+    $('posttest-panel').hidden=true;$('report-panel').hidden=false;
+    const data=buildLearningSummaryData();renderCompletionPage(data);
+    if(data.integration==='standalone'&&validateStudentId(learningSession.studentId).valid)renderLearningSummary();
+  }
+  const round2=value=>Math.round(value*100)/100;
+  const cloneData=value=>JSON.parse(JSON.stringify(value));
+  const cleanDimension=value=>String(value||'').replace(/^(?:N[1-4]|R|[ABC124])\s*[·（(]\s*/,'').replace(/[）)]$/,'');
+  const percentage=value=>value===null?'无适用节点':`${Math.round(value*100)}%`;
+  function effectivePretest(data){return data.pretest.skipped?data.pretest.carriedFrom:data.pretest;}
+  function trainingFocus(data){return data.diagnosis.map(tag=>`${DIAGNOSIS_LABELS[tag]||tag}（${tag}）`).join('、')||'无';}
+  function calculateMetrics(nodeRecords,posttest){
+    const nodes=Object.values(nodeRecords),applicable=nodes.filter(node=>typeof node.reasonCorrect==='boolean');
+    return {nodeIndependentRate:nodes.length?round2(nodes.filter(node=>node.hintLevelMax===0&&node.correct).length/nodes.length):0,
+      nodeReasonCorrectRate:applicable.length?round2(applicable.filter(node=>node.reasonCorrect).length/applicable.length):null,
+      hintLevelSum:nodes.reduce((sum,node)=>sum+node.hintLevelMax,0),posttestCorrectRate:round2(posttest.filter(item=>item.correct).length/POSTTEST_ITEMS.length)};
+  }
+  function buildRecommendation(data){
+    const mapping={
+      N1:['not-indet','这个案例正好练“识别类型”：先代入检验它是不是未定式，再决定能不能用法则。'],
+      N2:['exp-basic','这个案例正好练“验证条件”：把每条条件逐一检验一遍，再决定能否使用法则。'],
+      N3:['xlnx','这个案例正好练“决策与变形”：先判断它属于哪种类型，再决定是直接用法则还是先变形。'],
+      N4:['recheck','这个案例正好练“每步再检验”：每用一次法则，都要重新检验一次类型。'],
+      R:['x-sinx','这个案例正好练“结论有效性”：用了法则之后，先判断得到的结果能不能作为原极限的结论。']
+    };
+    const postNodes={'类型检验':'N1','变形':'N3','每步再检验':'N4','结论有效性':'R'};
+    const order=CASES[data.caseId].path;
+    const weak=[...new Set([...order.filter(id=>data.nodes[id]?.mastery==='review'),
+      ...data.posttest.details.filter(item=>!item.correct).map(item=>postNodes[cleanDimension(item.dimension)]).filter(Boolean),
+      ...order.filter(id=>data.nodes[id]?.mastery==='assisted')])];
+    const practiced=new Set([...(data.practicedCaseIds||[]),data.caseId]);
+    for(const nodeId of weak){
+      const [caseId,reason]=mapping[nodeId],dimension=cleanDimension(NODE_DIMENSIONS[nodeId]);
+      if(caseId!==data.caseId)return {kind:'target',caseId,caseName:CASES[caseId].name,nodeId,dimension,reason};
+      const contrastId=['exp-basic','x-sinx','recheck','xlnx','not-indet']
+        .find(id=>id!==data.caseId&&CASES[id].path.includes(nodeId)&&!practiced.has(id));
+      if(contrastId)return {kind:'contrast',caseId:contrastId,caseName:CASES[contrastId].name,nodeId,dimension,
+        reason:`这个案例同样要经过‘${dimension}’这一步，换一个情境再判断一次，和本轮的案例对照着练，比较两次判断的依据有什么不同。`};
+    }
+    if(weak.length){const nodeId=weak[0],dimension=cleanDimension(NODE_DIMENSIONS[nodeId]);
+      return {kind:'review',caseId:null,caseName:null,nodeId,dimension,reason:`回看本轮在‘${dimension}’这一步的提示和讲解。`};}
+    const caseId=['x-sinx','recheck','xlnx','not-indet','exp-basic'].find(id=>!practiced.has(id));
+    return caseId?{kind:'next',caseId,caseName:CASES[caseId].name,nodeId:null,dimension:null,reason:'换一个新情境再练一次，检验你的判断能否稳定迁移。'}:null;
+  }
+  function buildSummaryLine(data){
+    const clean=value=>String(value??'-').replace(/[|=,\n\r]/g,'_').trim();
+    const status={independent:'独',assisted:'提',review:'巩'};
+    const pre=data.pretest;
+    const tags=[...new Set(pre.details.map(item=>item.wrongTag).filter(Boolean))];
+    const nodes=CASES[data.caseId].path.filter(id=>data.nodes[id]).map(id=>`${clean(id)}:${clean(status[data.nodes[id].mastery]||'其他')}`).join(',')||'无';
+    return '【汇总行】v1|'+[
+      ['模块',clean(data.module)],['学生',clean(data.studentId)],['会话',clean(data.sessionId||'-')],
+      ['模式',data.integration==='chaoxing-agent'?'协作':'自主'],['案例',clean(data.caseId)],['路径','-'],
+      ['前测',pre.skipped?'跳过':`${pre.correct}/${pre.total}`],['前测错因',pre.skipped?'-':tags.map(clean).join(',')||'无'],
+      ['诊断',data.diagnosis.map(clean).join(',')||'无'],['节点',nodes],['灵活','-'],['条件不成立','-'],['误放行','-'],['保守回退','-'],
+      ['后测',data.posttest.details.length?`${data.posttest.correct}/${data.posttest.total}`:'-'],
+      ['用时',data.durationMs===null?'-':`${Math.round(data.durationMs/60000)}分`]
+    ].map(([key,value])=>`${key}=${value}`).join('|');
+  }
+  function validateStudentId(rawValue){
+    const value=String(rawValue||'').trim();
+    if(!value)return{valid:false,value,message:'请填写姓名或学号。'};
+    if(Array.from(value).length>30)return{valid:false,value,message:'姓名或学号最多30个字符。'};
+    if(!/^[\u3400-\u9fffA-Za-z0-9 _·-]+$/u.test(value))return{valid:false,value,message:'只能填写姓名或学号'};
+    return{valid:true,value,message:''};
+  }
+  function restoreStudentIdInput(){try{const saved=sessionStorage.getItem('xphs.studentId');const checked=validateStudentId(saved);if(checked.valid)$('student-id-input').value=checked.value;}catch(_error){}}
+  function buildLearningSummaryData(){
+    const session=learningSession,postCorrect=session.posttest.filter(item=>item.correct).length,preWrong=session.pretest.filter(item=>!item.correct);
+    const nodes=cloneData(session.nodes),carriedFrom=session.integration==='chaoxing-agent'?null:freezeSnapshot(cloneData(session.pretestCarriedFrom));
+    const wrongDimensions=[...new Set(preWrong.map(item=>item.dimension))];
+    const weaknesses=[...new Set([...(carriedFrom?.wrongDimensions||wrongDimensions),
+      ...CASES[session.caseId].path.filter(id=>nodes[id]?.mastery==='review').map(id=>nodes[id].dimension),
+      ...session.posttest.filter(item=>!item.correct).map(item=>item.dimension)].map(cleanDimension))];
+    const checked=validateStudentId(session.studentId);
+    const data={schemaVersion:'1.1',module:'lhopital',moduleName:'洛必达法则',source:'lhopital-lite',studentId:checked.valid?checked.value:'',
+      integration:session.integration==='chaoxing-agent'?'chaoxing-agent':'standalone',sessionId:session.sessionId||null,caseId:session.caseId,
+      caseName:CASES[session.caseId].name,mode:'student',entry:session.entryMode==='full'?'full':'practice',pathMode:null,
+      hintProfile:session.hintProfile,diagnosis:[...session.diagnosis],hintFading:cloneData(session.hintFading),
+      pretest:{skipped:Boolean(session.pretestSkipped),correct:session.pretest.filter(item=>item.correct).length,
+        total:session.pretest.length,wrongDimensions,
+        details:session.pretest.map(item=>({id:item.id,dimension:item.dimension,answer:item.answer,correctAnswer:item.correctAnswer,
+          correct:item.correct,reason:item.reason,answerCorrect:item.answerCorrect,reasonId:item.reasonId,
+          reasonCorrect:item.reasonCorrect,wrongTag:item.wrongTag})),carriedFrom},
+      nodes,posttest:{correct:postCorrect,total:POSTTEST_ITEMS.length,details:cloneData(session.posttest),
+        formId:session.posttestForm?.formId||selectPosttestForm(session.round).form.id,
+        bankVersion:POSTTEST_BANK_VERSION,isReview:session.posttestForm?.isReview??selectPosttestForm(session.round).isReview},
+      metrics:calculateMetrics(nodes,session.posttest),weaknesses,timestamp:new Date().toISOString(),round:session.round,
+      durationMs:session.completedAt!==null?Math.max(0,session.completedAt-session.startedAt):null};
+    // History is an input to the pure recommendation function, not a new protocol field.
+    data.recommendation=buildRecommendation({...data,practicedCaseIds:[...session.practicedCaseIds]});
+    data.summaryLine=buildSummaryLine(data);
+    return data;
+  }
+  function buildAdviceText(data){
+    const parts=[],pre=effectivePretest(data);
+    if(pre?.wrongDimensions.length)parts.push(`先复习${pre.wrongDimensions.join('、')}。`);
+    for(const id of CASES[data.caseId].path){const node=data.nodes[id];if(!node)continue;
+      if(node.mastery==='review')parts.push(`你在${cleanDimension(node.dimension)}上仍需巩固（作答 ${node.attempts} 次，最高提示 ${node.hintLevelMax} 级）。`);
+      if(node.mastery==='assisted')parts.push(`你在${cleanDimension(node.dimension)}上需要提示才能判断（作答 ${node.attempts} 次，最高提示 ${node.hintLevelMax} 级）。`);}
+    data.posttest.details.forEach((item,index)=>{if(!item.correct)parts.push(`后测第 ${index+1} 题（${cleanDimension(item.dimension)}）选错了。`);});
+    const recommendation=data.recommendation;
+    if(recommendation?.kind==='target'||recommendation?.kind==='next')parts.push(`建议下一步练习「${recommendation.caseName}」。${recommendation.reason}`);
+    else if(recommendation?.kind==='contrast')parts.push(`建议下一步练习「${recommendation.caseName}」做对照。${recommendation.reason}`);
+    else if(recommendation?.kind==='review')parts.push(`和它对照的案例你都已练过，建议回看本轮的提示和讲解，再想一想：${recommendation.reason}`);
+    else if(!parts.length)parts.push('你已经能独立完成当前路径并正确迁移，本模块的案例都已练过，可以回看各案例，对比法则在哪些情况下有效、哪些情况下失效。');
+    else parts.push('本模块的案例都已练过，建议按上面的提示回看相关内容。再对比法则在哪些情况下有效、哪些情况下失效。');
+    return parts.join('');
+  }
+  function renderLearningReport(data){
+    const report=element('section');report.id='student-learning-report';addText(report,'h2','','学习报告');
+    const values=Object.values(data.nodes),pre=effectivePretest(data),counts={independent:0,assisted:0,review:0};
+    values.forEach(node=>{if(node.mastery in counts)counts[node.mastery]++;});
+    const preLabel=pre?`前测 ${pre.correct}/${pre.total}${data.pretest.skipped?'（上一轮）':''}`:'前测已跳过';
+    const overview=addText(report,'p','learning-report-summary',`${preLabel}；流程判断：独立掌握 ${counts.independent} 个、提示后掌握 ${counts.assisted} 个、需要巩固 ${counts.review} 个；后测 ${data.posttest.correct}/${data.posttest.total}。`);overview.id='learning-report-overview';
+    const stats=element('div','report-stat');
+    stats.append(element('div','stat',`节点独立通过率：${percentage(data.metrics.nodeIndependentRate)}`),
+      element('div','stat',`节点理由正确率：${percentage(data.metrics.nodeReasonCorrectRate)}`),element('div','stat',`提示等级总和：${data.metrics.hintLevelSum}`));report.append(stats);
+    addText(report,'p','small',`提示档位：${HINT_PROFILE_LABELS[data.hintFading.start]} → ${HINT_PROFILE_LABELS[data.hintFading.end]}`);
+    if(data.posttest.formId)addText(report,'p','small',`后测题组：${data.posttest.formId}（${data.posttest.isReview?'复习题':'首次练习'}）`);
+    const grid=element('div','mastery-grid');grid.id='learning-mastery-grid';
+    function card(title,state,description,kind,key){const item=element('article','mastery-item');if(key)item.dataset.nodeId=key;
+      item.append(element('strong','',title),element('span','mastery-state '+kind,state),richElement('span','',description));grid.append(item);}
+    if(pre){const focus=data.diagnosis.length?`本次训练重点：${data.diagnosis.map(tag=>DIAGNOSIS_LABELS[tag]||tag).join('、')}。`:'';
+      card(data.pretest.skipped?'前测基础（沿用上一轮）':'前测基础',pre.wrongDimensions.length?'存在薄弱点':'基础稳固',
+        (pre.wrongDimensions.length?`需留意：${pre.wrongDimensions.join('、')}。`:'前测判断与依据均正确。')+focus,pre.wrongDimensions.length?'assisted':'good');}
+    for(const id of CASES[data.caseId].path){const node=data.nodes[id];
+      card(cleanDimension(NODE_DIMENSIONS[id]),node?(node.mastery==='review'?'尚需巩固':MASTERY_LABELS[node.mastery]):'未经过',
+        node?`作答 ${node.attempts} 次，${node.hintUsed?'使用过提示':'未使用提示'}；最高提示 ${node.hintLevelMax} 级。`:'本轮未经过该节点。',node?.mastery==='independent'?'good':node?.mastery||'',id);}
+    data.posttest.details.forEach((item,index)=>{
+      card(`后测第 ${index+1} 题 · ${item.dimension}${item.variantId?` · ${item.variantId}`:''}`,item.correct?'判断正确':'尚需巩固',
+        (item.question?`题目：${item.question} `:'')+
+        (item.correct?'':`你的选择：${item.answer}${item.answerText?`（${item.answerText}）`:''}；正确答案：${item.correctAnswer}${item.correctAnswerText?`（${item.correctAnswerText}）`:''}。`)+
+        `讲解：${item.explanation||''}`,item.correct?'good':'review');});
+    report.append(grid);const advice=element('section','learning-report-advice');advice.id='learning-report-advice';
+    addText(advice,'h3','','下一步建议');addText(advice,'p','',buildAdviceText(data));
+    if(['target','contrast','next'].includes(data.recommendation?.kind)){const button=makeButton('去练这个案例',()=>showRecommendationDialog(data),'orange');button.id='recommendation-button';advice.append(button);}
+    report.append(advice);return report;
+  }
+  function renderCompletionPage(data){
+    const panel=$('report-panel');panel.replaceChildren();const standalone=data.integration==='standalone';
+    if(standalone)panel.append(renderLearningReport(data));
+    else addText(panel,'p','note-box','✅ 本次练习已完成。请把学习记录发给智能体，它会为你分析并给出下一步建议。');
+    const label=addText(panel,'label','field-label','姓名或学号（用于老师汇总全班情况）');label.htmlFor='student-id-input';
+    const input=element('input','text-field');input.id='student-id-input';input.placeholder='例如：张三 或 2024010101';input.maxLength=40;panel.append(input);
+    if(data.studentId)input.value=data.studentId;else restoreStudentIdInput();
+    const controls=element('div','action-row');
+    const generate=makeButton('生成学习数据摘要',renderLearningSummary,'orange');generate.id='summary-generate-btn';controls.append(generate);
+    const update=makeButton('更新摘要',renderLearningSummary,'secondary');update.id='summary-update-btn';update.hidden=true;controls.append(update);
+    const resend=makeButton('重新发送给父页面',resendLearningSummary,'secondary');resend.id='summary-resend-btn';resend.hidden=true;controls.append(resend);panel.append(controls);
+    const idFeedback=addText(panel,'p','feedback-inline','');idFeedback.id='student-id-feedback';
+    const section=element('section','section-gap');section.id='learning-summary-section';section.hidden=true;
+    if(standalone){const history=element('div');history.id='saved-summary-rounds';section.append(history);
+      const copyLine=makeButton('📋 复制汇总行',()=>copyLearningSummary('line'));copyLine.id='copy-summary-line';section.append(copyLine);
+      addText(section,'p','small','老师用问卷收集学习数据时，粘贴全部汇总行即可（每轮一行）。');}
+    const record=element(standalone?'details':'div','complete-record');record.id='complete-learning-record';
+    if(standalone)addText(record,'summary','','查看完整学习记录');else addText(record,'h3','','学习记录');
+    if(summaryDebug){const tabs=element('div','summary-tabs');
+      for(const [key,label] of [['text','文字摘要'],['json','JSON']]){const tab=makeButton(label,()=>switchSummaryTab(key),'secondary');tab.classList.add('summary-tab');tab.dataset.tab=key;tabs.append(tab);}record.append(tabs);}
+    const textOutput=element('pre','summary-output');textOutput.id='learning-summary-text';record.append(textOutput);
+    if(summaryDebug){const jsonOutput=element('pre','summary-output');jsonOutput.id='learning-summary-json';jsonOutput.hidden=true;record.append(jsonOutput);}
+    const copy=element('div','action-row');copy.append(makeButton(standalone?'复制完整记录':'📋 复制学习记录，发给智能体',()=>copyLearningSummary('text')));
+    if(!standalone){const copyLine=makeButton('📋 复制汇总行',()=>copyLearningSummary('line'),'secondary');copyLine.id='copy-summary-line';copy.append(copyLine);}
+    if(summaryDebug)copy.append(makeButton('复制 JSON',()=>copyLearningSummary('json'),'secondary'));record.append(copy);section.append(record);
+    const lineOutput=element('pre','summary-line-output');lineOutput.id='summary-line-output';lineOutput.hidden=true;section.append(lineOutput);
+    const posted=addText(section,'p','success-text','');posted.id='summary-send-status';posted.hidden=true;
+    const copyFeedback=addText(section,'p','feedback-inline','');copyFeedback.id='copy-feedback';copyFeedback.setAttribute('aria-live','polite');panel.append(section);
+    input.addEventListener('input',updateSummaryResendButton);
+  }
+  function buildLearningSummaryText(data){
+    const lines=['【洛必达法则训练数据】','模块：洛必达法则（lhopital）',`学生：${data.studentId}`,`模式：${data.integration==='chaoxing-agent'?'智能体协作':'自主学习'}`,
+      `会话：${data.sessionId||'-'}`,`案例：${data.caseName}（${data.caseId}）`,'路径：-',
+      `提示档位：${HINT_PROFILE_LABELS[data.hintFading.start]}（${data.hintFading.start}）→ ${HINT_PROFILE_LABELS[data.hintFading.end]}（${data.hintFading.end}）`];
+    if(data.hintFading.changes.length)lines.push(`档位变化：${data.hintFading.changes.map(change=>`${change.afterNode} 后 ${HINT_PROFILE_LABELS[change.from]}→${HINT_PROFILE_LABELS[change.to]}（${change.cause==='two-independent'?'连续独立通过':'答错'}）`).join('；')}`);
+    lines.push(`训练重点：${trainingFocus(data)}`);
+    const pre=effectivePretest(data);
+    if(!data.pretest.skipped)lines.push(`前测：${pre.correct}/${pre.total}`,`薄弱维度：${pre.wrongDimensions.join('、')||'无'}`);
+    else if(pre)lines.push(`前测：本轮未做（沿用上一轮：${pre.correct}/${pre.total}；薄弱维度：${pre.wrongDimensions.join('、')||'无'}）`);
+    else lines.push('前测：已由智能体完成（课件端跳过）');
+    lines.push('流程判断：');
+    for(const id of CASES[data.caseId].path){const node=data.nodes[id];if(!node)continue;
+      let description=`${id}（${cleanDimension(node.dimension)}）：${MASTERY_LABELS[node.mastery]||node.mastery}，作答 ${node.attempts} 次，最高提示 ${node.hintLevelMax} 级`;
+      if(node.reasonText)description+=`；理由：${node.reasonText}`;
+      const first=node.attemptLog[0];
+      if(first&&!first.answerCorrect){const label=ANSWER_OPTIONS[id].find(([key])=>key===first.answer)?.[1];description+=`；首次判断错${label?`，选“${label}”`:''}`;}
+      if(node.attemptLog.some(item=>item.answerCorrect&&!item.reasonCorrect))description+='；有一次判断对但理由错';lines.push(description);}
+    lines.push(`后测：${data.posttest.correct}/${data.posttest.total}${data.posttest.formId?`（${data.posttest.formId} 组，${data.posttest.isReview?'复习题':'首次练习'}）`:''}`);
+    const postStart=lines.length;
+    function postLine(detail,index,compact=false){
+      const clip=(value,length)=>{const text=String(value||'');return compact&&text.length>length?text.slice(0,length-1)+'…':text;};
+      return `第 ${index+1} 题（${detail.dimension}${detail.variantId?`；${detail.variantId}`:''}）：${detail.correct?'正确':`错误（选 ${detail.answer}，应为 ${detail.correctAnswer}）`}`+
+        (detail.question?`；题目：${clip(detail.question,48)}`:'')+
+        (detail.answerText?`；选择：${detail.answer} ${clip(detail.answerText,25)}`:'')+
+        (!detail.correct&&detail.correctAnswerText?`；应选：${detail.correctAnswer} ${clip(detail.correctAnswerText,25)}`:'')+
+        `；依据：${clip(detail.reason,24)}`;
+    }
+    data.posttest.details.forEach((detail,index)=>lines.push(postLine(detail,index)));
+    lines.push(`学习指标：独立判断率 ${percentage(data.metrics.nodeIndependentRate)}；理由正确率 ${percentage(data.metrics.nodeReasonCorrectRate)}；提示等级总和 ${data.metrics.hintLevelSum}；后测正确率 ${percentage(data.metrics.posttestCorrectRate)}`);
+    lines.push(`主要薄弱点：${data.weaknesses.length?data.weaknesses.join('、'):'表现良好，无明显薄弱点。'}`);
+    const recommendation=data.recommendation;
+    if(recommendation?.kind==='review')lines.push(`推荐案例：无（建议复习：${recommendation.dimension}）`);
+    else if(recommendation?.kind==='next')lines.push(`推荐案例：${recommendation.caseName}（${recommendation.caseId}）——新情境练习`);
+    else if(recommendation)lines.push(`推荐案例：${recommendation.caseName}（${recommendation.caseId}）——${recommendation.kind==='contrast'?'对照练习：':''}${recommendation.reason}`);
+    else lines.push('推荐案例：无（本模块案例已全部练过）');
+    if(data.durationMs!==null){const seconds=Math.floor(data.durationMs/1000);lines.push(`用时：${Math.floor(seconds/60)} 分 ${seconds%60} 秒`);}
+    let body=lines.join('\n');
+    if(body.length>1200)body=lines.map(line=>line.replace(/；首次判断错(?:，选“[^”]*”)?/,'')).join('\n');
+    if(body.length>1200)body=body.split('\n').map(line=>line.replace(/(；依据：.{75}).+/u,'$1…')).join('\n');
+    if(body.length>1200){
+      const compact=lines.map((line,index)=>index>=postStart&&index<postStart+data.posttest.details.length
+        ?postLine(data.posttest.details[index-postStart],index-postStart,true)
+        :/^(N[1-4]|R)（/.test(line)?line.replace(/；理由：.*?(?=；首次判断错|；有一次判断对但理由错|$)/, '；理由：详见节点讲解'):line);
+      body=compact.join('\n');
+    }
+    if(body.length>1200)body=body.slice(0,1199)+'…';
+    return `${body}\n\n${data.summaryLine}`;
+  }
+  function loadSavedSummaryLines(){
+    try{const rows=JSON.parse(sessionStorage.getItem(SUMMARY_LINES_KEY)||'[]');return Array.isArray(rows)?rows.filter(row=>row&&Number.isInteger(row.round)&&row.round>0&&typeof row.sessionId==='string'&&typeof row.caseName==='string'&&CASE_IDS.includes(row.caseId)&&typeof row.summaryLine==='string'&&row.summaryLine.startsWith('【汇总行】v1|')&&!/[\r\n]/.test(row.summaryLine)):[];}catch(_error){return[];}
+  }
+  function saveSummaryLine(data){
+    if(data.integration!=='standalone')return;
+    const row={round:data.round,sessionId:data.sessionId,caseId:data.caseId,caseName:data.caseName,summaryLine:data.summaryLine};
+    const index=savedSummaryLines.findIndex(item=>item.sessionId===data.sessionId&&item.round===data.round);
+    if(index<0)savedSummaryLines.push(row);else savedSummaryLines[index]=row;
+    try{sessionStorage.setItem(SUMMARY_LINES_KEY,JSON.stringify(savedSummaryLines));}catch(_error){}
+  }
+  function renderSummaryLines(data){
+    const standalone=data.integration==='standalone',history=$('saved-summary-rounds');
+    if(standalone&&history){history.replaceChildren();const list=element('ul','saved-rounds');
+      savedSummaryLines.forEach(row=>list.append(element('li','',`第 ${row.round} 轮 · ${row.caseName} · 已保存`)));history.append(list);}
+    $('copy-summary-line').textContent=standalone&&savedSummaryLines.length>1?`📋 复制全部汇总行（共 ${savedSummaryLines.length} 行）`:'📋 复制汇总行';
+    $('summary-line-output').textContent=standalone?savedSummaryLines.map(row=>row.summaryLine).join('\n'):data.summaryLine;
+  }
+  function renderLearningSummary(){
+    const checked=validateStudentId($('student-id-input').value),feedback=$('student-id-feedback');
+    if(!checked.valid){feedback.textContent=checked.message;return;}
+    feedback.textContent='';learningSession.studentId=checked.value;
+    try{sessionStorage.setItem('xphs.studentId',checked.value);}catch(_error){}
+    const data=buildLearningSummaryData();
+    $('learning-summary-text').textContent=buildLearningSummaryText(data);
+    if($('learning-summary-json'))$('learning-summary-json').textContent=JSON.stringify(data,null,2);
+    saveSummaryLine(data);renderSummaryLines(data);
+    $('learning-summary-section').hidden=false;$('summary-generate-btn').hidden=true;$('summary-update-btn').hidden=false;
+    switchSummaryTab('text');learningSession.lastRenderedSummary=data;
+    if(data.integration==='chaoxing-agent'&&learningSession.summaryPostedForCompletion!==learningSession.completedAt){
+      if(tryPostMessageSummary(data)){learningSession.lastPostedStudentId=data.studentId;$('summary-send-status').hidden=false;$('summary-send-status').textContent='已自动发送给智能体';}
+      learningSession.summaryPostedForCompletion=learningSession.completedAt;
+    }
+    updateSummaryResendButton();
+  }
+  function switchSummaryTab(tab){
+    const json=$('learning-summary-json');if(tab==='json'&&!json)return;
+    $('learning-summary-text').hidden=tab==='json';if(json)json.hidden=tab!=='json';
+    document.querySelectorAll('.summary-tab').forEach(button=>button.classList.toggle('active',button.dataset.tab===tab));
+  }
+  async function copyLearningSummary(format){
+    const source=$(format==='line'?'summary-line-output':format==='json'?'learning-summary-json':'learning-summary-text'),feedback=$('copy-feedback');
+    if(!source)return;
+    try{if(!navigator.clipboard?.writeText)throw new Error('clipboard unavailable');await navigator.clipboard.writeText(source.textContent||'');
+      feedback.className='feedback-inline success-text';feedback.textContent='已复制到剪贴板。';}
+    catch(_error){if(format==='line')source.hidden=false;else{const record=$('complete-learning-record');if(record.tagName==='DETAILS')record.open=true;switchSummaryTab(format);}
+      const selection=window.getSelection(),range=document.createRange();range.selectNodeContents(source);selection?.removeAllRanges();selection?.addRange(range);
+      feedback.className='feedback-inline';feedback.textContent='自动复制失败，内容已选中；请手动复制。';}
+  }
+  function freezeSnapshot(value){if(value&&typeof value==='object'){Object.values(value).forEach(freezeSnapshot);Object.freeze(value);}return value;}
+  function startRecommendedCase(data){
+    if(usageMode!=='student'||learningSession.integration==='chaoxing-agent'||!data.recommendation)return;
+    const previous=learningSession,pre=effectivePretest(data),next=createLearningSession(null);
+    next.sessionId=previous.sessionId;next.studentId=previous.studentId;next.entryMode='full';next.round=previous.round+1;
+    next.pretestSkipped=true;next.pretestCarriedFrom=pre?freezeSnapshot(cloneData({correct:pre.correct,total:pre.total,wrongDimensions:pre.wrongDimensions,details:pre.details})):null;
+    next.diagnosis=[...data.diagnosis];next.practicedCaseIds=[...new Set([...previous.practicedCaseIds,data.caseId])];
+    next.hintProfile=data.hintFading.end;next.currentHintProfile=data.hintFading.end;
+    next.hintFading={start:data.hintFading.end,end:data.hintFading.end,changes:[]};learningSession=next;
+    $('intro').textContent='继续逐节点作答；本轮沿用上一轮的前测结果和训练重点。';startCase(data.recommendation.caseId);
+    $('node-card').scrollIntoView({block:'start'});
+  }
+  function showRecommendationDialog(data){
+    if(data.integration!=='standalone'||!data.recommendation||$('recommendation-modal'))return;
+    const saved=savedSummaryLines.some(row=>row.sessionId===data.sessionId&&row.round===data.round);
+    const overlay=element('div','modal-backdrop');overlay.id='recommendation-modal';
+    const dialog=element('section','recommendation-dialog');dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-labelledby','recommendation-dialog-title');
+    const title=addText(dialog,'h3','','开始下一轮练习');title.id='recommendation-dialog-title';
+    addText(dialog,'p','',saved?`本轮汇总行已保存（本次共 ${savedSummaryLines.length} 行）。全部练完后，点“复制全部汇总行”一次提交即可。`:'本轮学习数据还没有保存。如需提交，请先填写姓名／学号并点“生成学习数据摘要”。');
+    function close(back){overlay.remove();(back?$('student-id-input'):$('recommendation-button'))?.focus();}
+    const actions=element('div','action-row');
+    const returnButton=makeButton(saved?'取消':'返回生成',()=>close(!saved),'secondary');
+    const nextButton=makeButton(saved?'继续跳转':'直接跳转（不保存本轮）',()=>{overlay.remove();startRecommendedCase(data);},'orange');
+    if(saved)actions.append(nextButton,returnButton);else actions.append(returnButton,nextButton);dialog.append(actions);overlay.append(dialog);$('report-panel').append(overlay);
+    const buttons=actions.querySelectorAll('button');buttons[0].focus();
+    overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close(false);}if(event.key==='Tab'){
+      const first=buttons[0],last=buttons[buttons.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}});
+  }
+
+  function getSummaryParentOrigin(){
+    try{if(window===window.parent)return null;const origin=document.referrer?new URL(document.referrer).origin:null;
+      return ALLOWED_PARENT_ORIGINS.includes(origin)?origin:null;}catch(_error){return null;}
+  }
+  function tryPostMessageSummary(data){
+    try{const origin=getSummaryParentOrigin();if(!origin)return false;
+      window.parent.postMessage({type:'LHOPITAL_LEARNING_SUMMARY',schemaVersion:'1.1',payload:data},origin);return true;
+    }catch(_error){return false;}
+  }
+  function updateSummaryResendButton(){
+    const button=$('summary-resend-btn');if(!button)return;
+    const rendered=learningSession.lastRenderedSummary;
+    button.hidden=!getSummaryParentOrigin()||!rendered||!learningSession.lastPostedStudentId||
+      rendered.studentId===learningSession.lastPostedStudentId;
+  }
+  function resendLearningSummary(){
+    const data=learningSession.lastRenderedSummary;
+    if(!data||!getSummaryParentOrigin()||!learningSession.lastPostedStudentId||data.studentId===learningSession.lastPostedStudentId)return;
+    if(tryPostMessageSummary(data)){learningSession.lastPostedStudentId=data.studentId;$('student-id-feedback').textContent='已重新发送。';$('summary-send-status').hidden=false;$('summary-send-status').textContent='已自动发送给智能体';updateSummaryResendButton();}
+  }
+  function init(){
+    $('mode-chip').textContent=modeLabel();
+    $('intro').textContent=usageMode==='teacher'?'选择案例，逐节点演示“先判后算”的四步检验。':'每个节点先选判断，再选理由；完成案例后做 4 道后测。';
+    if(usageMode==='teacher'){
+      const studentButton=$('student-mode-button');studentButton.hidden=false;studentButton.addEventListener('click',startStandaloneStudy);
+      const selector=$('case-selector');selector.hidden=false;
+      CASE_IDS.forEach(id=>{const option=element('option','',CASES[id].name);option.value=id;selector.append(option);});
+      selector.addEventListener('change',()=>startCase(selector.value));startCase('exp-basic');
+    }else startCase(selectInitialCase());
+  }
+  init();
+  </script>
+</body>
+</html>
