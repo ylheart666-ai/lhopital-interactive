@@ -815,13 +815,20 @@
     const pre=data.pretest;
     const tags=[...new Set(pre.details.map(item=>item.wrongTag).filter(Boolean))];
     const nodes=CASES[data.caseId].path.filter(id=>data.nodes[id]).map(id=>`${clean(id)}:${clean(status[data.nodes[id].mastery]||'其他')}`).join(',')||'无';
+    const trap=CASES[data.caseId]?.flowchart?.trap||null;
+    let trapMisuse='-';
+    if(trap){
+      const first=data.nodes?.[trap.node]?.attemptLog?.[0];
+      trapMisuse=!first?'未到':(first.answer===trap.option?'1':'0');
+    }
     return '【汇总行】v1|'+[
       ['模块',clean(data.module)],['学生',clean(data.studentId)],['会话',clean(data.sessionId||'-')],
       ['模式',data.integration==='chaoxing-agent'?'协作':'自主'],['案例',clean(data.caseId)],['路径','-'],
       ['前测',pre.skipped?'跳过':`${pre.correct}/${pre.total}`],['前测错因',pre.skipped?'-':tags.map(clean).join(',')||'无'],
       ['诊断',data.diagnosis.map(clean).join(',')||'无'],['节点',nodes],['灵活','-'],['条件不成立','-'],['误放行','-'],['保守回退','-'],
       ['后测',data.posttest.details.length?`${data.posttest.correct}/${data.posttest.total}`:'-'],
-      ['用时',data.durationMs===null?'-':`${Math.round(data.durationMs/60000)}分`]
+      ['用时',data.durationMs===null?'-':`${Math.round(data.durationMs/60000)}分`],
+      ['陷阱误选',trapMisuse]
     ].map(([key,value])=>`${key}=${value}`).join('|');
   }
   function validateStudentId(rawValue){
